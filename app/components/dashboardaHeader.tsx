@@ -66,7 +66,7 @@ const DashboardHeader = () => {
                 </div>
             </div>
             <div className="right flex items-center">
-                <img className="size-10 rounded-full border-2 border-[#d4d5d6]" src={loggedInUSer?.profilePic} />
+                <img className="size-10 rounded-full border-2 border-[#d4d5d6]" src={loggedInUSer?.profilePic || "https://robohash.org/111.235.68.162.png"} />
                 <h3 className="pr-8 pl-3">{loggedInUSer?.firstName} {loggedInUSer?.lastName}</h3>
             </div>
         </div>

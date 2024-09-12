@@ -6,7 +6,14 @@ export interface Attachment {
     link: string;
     size: number;
     metadata: string;
-}
+};
+
+export interface Comment {
+    _id: string;
+    commentedBy: string; // User ID
+    content: string;
+    commentedAt: string;
+};
 
 export interface Itemm {
     _id: string;
@@ -23,18 +30,27 @@ export interface Itemm {
     order?: number;
     assignee?: string;
     attachments?: Attachment[];
+    comments?: Comment[];
 };
 
 interface ItemsSlice {
-    status: 'idle' | 'pending' | 'fulfilled' | 'rejected';
+    fetchStatus: 'idle' | 'pending' | 'fulfilled' | 'rejected';
+    updateItemStatus: 'idle' | 'pending' | 'fulfilled' | 'rejected';
     items: Itemm[];
-    error: string | null;
+    errorFetchingItems: string | null;
+    errorCreatingItem: string | null;
+    errorUpdatingItem: string | null;
+    errorCommenting: string | null;
 };
 
 const initialState: ItemsSlice = {
-    status: 'idle',
+    fetchStatus: 'idle',
+    updateItemStatus: 'idle',
     items: [],
-    error: null,
+    errorFetchingItems: null,
+    errorCreatingItem: null,
+    errorUpdatingItem: null,
+    errorCommenting: null,
 };
 
 export const fetchItems = createAsyncThunk<Itemm[], string>('items/fetchItems', async(currentProjectId: string) => {
@@ -62,30 +78,81 @@ export const createItem = createAsyncThunk<Itemm, FormData>(
       );
       return response.data;
     }
-  );
-  
+);
+
+export const updateItem = createAsyncThunk<Itemm, { itemId: string; updatedData: Partial<Itemm> }>(
+    'items/updateItem',
+    async({itemId, updatedData}) => {
+        const response = await axios.put(
+            `http://localhost:3030/api/item/${itemId}`,
+            updatedData,
+            { withCredentials: true }
+          );
+          return response.data;
+    }
+);
+
+export const addComment = createAsyncThunk(
+    'items/addComment',
+    async({ itemId, comment }: { itemId: string, comment: string }) => {
+        const response = await axios.post(
+            `http://localhost:3030/api/comment/${itemId}`,
+            { comment },
+            { withCredentials: true }
+        );
+        return response.data;
+    }
+)
 
 const itemsSlice = createSlice({
     name: 'items',
     initialState,
-    reducers: {},
+    reducers: {
+        resetUpdateItemStatus: (state) => {
+            state.updateItemStatus = 'idle';
+        }
+    },
     extraReducers: (builder) => {
         builder
             .addCase(fetchItems.pending, (state) => {
-                state.status = 'pending';
+                state.fetchStatus = 'pending';
             })
             .addCase(fetchItems.fulfilled, (state, action: PayloadAction<Itemm[]>) => {
-                state.status = 'fulfilled';
+                state.fetchStatus = 'fulfilled';
                 state.items = action.payload;
             })
             .addCase(fetchItems.rejected, (state, action) => {
-                state.status = 'rejected';
-                state.error = action.error.message || 'Failed to fetch items';
+                state.fetchStatus = 'rejected';
+                state.errorFetchingItems = action.error.message || 'Failed to fetch items';
             })
             .addCase(createItem.fulfilled, (state, action) => {
                 state.items.push(action.payload);
+            })
+            .addCase(createItem.rejected, (state, action) => {
+                state.errorCreatingItem = action.error.message || 'Failed to create item';
+            })
+            .addCase(updateItem.pending, (state) => {
+                state.updateItemStatus = 'pending';
+            })
+            .addCase(updateItem.fulfilled, (state, action) => {
+                const index = state.items.findIndex((item) => item._id === action.payload._id);
+                if (index !== -1) {
+                    state.items[index] = action.payload;
+                }
+                state.updateItemStatus = 'fulfilled';
+            })
+            .addCase(updateItem.rejected, (state, action) => {
+                state.errorUpdatingItem = action.error.message || 'Failed to updating item';
+                state.updateItemStatus = 'rejected';
+            })
+            .addCase(addComment.fulfilled, (state, action) => {
+                const index = state.items.findIndex((item) => item._id === action.payload._id);
+                if (index !== -1) {
+                    state.items[index] = action.payload;
+                }
             })
     },
 });
 
 export default itemsSlice.reducer;
+export const { resetUpdateItemStatus } = itemsSlice.actions;

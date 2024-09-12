@@ -1,4 +1,5 @@
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { updateItem, resetUpdateItemStatus, addComment } from "@/redux/slices/items/itemsSlice";
 import { resetCurrentItemId } from "@/redux/slices/items/viewItemModal";
 import { useState, useEffect } from "react";
 
@@ -8,6 +9,8 @@ const ViewItemModal = () => {
     const currentItemId = useAppSelector((state) => state.ViewItemReducer.currentItemId);
     const currentItem = useAppSelector((state) => state.itemsReducer.items.find((item) => item._id === currentItemId));
     const loggedInUser = useAppSelector((state) => state.userReducer.user);
+    const errorUpdatingItem = useAppSelector((state) => state.itemsReducer.errorUpdatingItem);
+    const updateItemStatus = useAppSelector((state) => state.itemsReducer.updateItemStatus);
     
     const [title, setTitle] = useState(currentItem?.title || "");
     const [description, setDescription] = useState(currentItem?.description || "");
@@ -21,6 +24,7 @@ const ViewItemModal = () => {
     const members = useAppSelector((state) => state.MembersReducer.members);
 
     const [hasChanges, setHasChanges] = useState(false);
+    const [newComment, setNewComment] = useState("");
 
     useEffect(() => {
         // Monitor changes in the form to toggle "Update" and "Cancel" buttons
@@ -39,9 +43,32 @@ const ViewItemModal = () => {
     }, [title, description, type, start, end, assignee, files, currentItem]);
 
     const handleUpdate = () => {
-        // dispatch(updateItem({ id: currentItemId, title, description, type, start, end, assignee, attachments: files }));
+        dispatch(updateItem({
+            itemId: currentItemId || "",
+            updatedData: { title, description, type, start, end, assignee }
+        }));
+
         setHasChanges(false);
     };
+
+    const handleAddComment = () => {
+        if (newComment.trim()) {
+          dispatch(addComment({
+            itemId: currentItemId || "", 
+            comment: newComment 
+        }));
+          setNewComment("");
+        }
+      };
+
+    useEffect(() => {
+        if (updateItemStatus === 'fulfilled') {
+            dispatch(resetCurrentItemId());
+            dispatch(resetUpdateItemStatus());
+        }
+        console.log("updateItemStatus.............", updateItemStatus);
+        
+    }, [updateItemStatus]);
 
     const handleCancel = () => {
         // Revert changes and close modal
@@ -136,6 +163,43 @@ const ViewItemModal = () => {
 
                 <div className="mb-4">
                     {/* File handling and display */}
+                </div>
+
+                <div className="mt-4">
+                    <h3 className="font-medium mb-2">Comments</h3>
+                    {(currentItem?.comments || []).length > 0 ? (
+                    <ul>
+                        {currentItem?.comments?.map((comment) => (
+                        <li key={comment._id} className="mb-2">
+                            <p>{comment.content}</p>
+                            <small>
+                                By {members.find((member) => member._id === comment.commentedBy)?.firstName || 'Unknown'}
+                                {members.find((member) => member._id === comment.commentedBy)?.lastName || 'Unknown'} at {new Date(comment.commentedAt).toLocaleString()}
+                            </small>
+                        </li>
+                        ))}
+                    </ul>
+                    ) : (
+                    <p className="w-full text-center">No comments yet.</p>
+                    )}
+                </div>
+
+                <div className="mt-4">
+                    <input
+                    type="text"
+                    value={newComment}
+                    onChange={(e) => setNewComment(e.target.value)}
+                    className="w-full px-3 py-2 border rounded-lg mb-2"
+                    placeholder="Add a comment"
+                    />
+                    {newComment !== "" && 
+                    <button 
+                        onClick={handleAddComment} 
+                        className="bg-blue-500 text-white px-4 py-2 rounded"
+                    >
+                    Post Comment
+                    </button>
+                    }
                 </div>
 
                 {hasChanges && (
