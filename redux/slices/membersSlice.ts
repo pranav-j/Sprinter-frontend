@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-interface Member {
+export interface Member {
   _id: string;
   email: string;
   profilePic: string;

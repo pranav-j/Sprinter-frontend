@@ -16,7 +16,7 @@ const TabDetails = () => {
     const selectedTab = useAppSelector((state) => state.tabReducer.selectedTab);
     const currentProjectId = useAppSelector((state) => state.currentProjectIdReducer.currentProjectId);
     const loggedInUser = useAppSelector((state) => state.userReducer.user);
-
+    const members = useAppSelector((state) => state.MembersReducer.members);
     const dispatch = useAppDispatch();
 
     const sprints = useAppSelector((state) => state.sprintsReducer.sprints);
@@ -138,7 +138,7 @@ const TabDetails = () => {
     //     }
     // ];
 
-    const members = [
+    const memberz = [
         {
             name: 'John Doe',
             imageUrl: 'https://robohash.org/johndoe.png',

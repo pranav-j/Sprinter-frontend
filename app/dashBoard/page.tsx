@@ -75,7 +75,6 @@ export default function Dashboard() {
             {
                 currentItemId ? (
                 <div className="h-screen absolute bottom-0 left-0">
-                    {/* <button className="bg-black text-gray-50 rounded p-2" onClick={() => dispatch(resetCurrentItemId())}>Close Item</button> */}
                     <ViewItemModal />
                 </div>
                 ) : null                

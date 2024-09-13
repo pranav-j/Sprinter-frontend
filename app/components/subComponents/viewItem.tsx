@@ -47,7 +47,6 @@ const ViewItemModal = () => {
             itemId: currentItemId || "",
             updatedData: { title, description, type, start, end, assignee }
         }));
-
         setHasChanges(false);
     };
 
@@ -92,7 +91,7 @@ const ViewItemModal = () => {
 
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-            <div className="bg-white p-8 rounded-lg w-2/5 max-h-[650px] overflow-scroll">
+            <div className="bg-white p-8 rounded-lg w-2/5 max-h-[650px] overflow-y-auto">
                 <div className="flex justify-between text-xl mb-4">
                     <h2>View Item</h2>
                     <button onClick={handleCancel} className="px-2">x</button>
@@ -110,8 +109,20 @@ const ViewItemModal = () => {
                 <textarea 
                     value={description} 
                     onChange={(e) => setDescription(e.target.value)} 
-                    className="w-full px-3 py-2 border rounded-lg mb-4"
+                    className="w-full px-3 py-2 border rounded-lg mb-4 min-h-[100px] max-h-[500px]"
                 />
+                {/* <textarea 
+                    value={description} 
+                    onChange={(e) => setDescription(e.target.value)} 
+                    onInput={(e) => {
+                        const target = e.target as HTMLTextAreaElement;
+                        target.style.height = "auto";  // Reset height
+                        target.style.height = `${target.scrollHeight}px`;  // Set height based on scrollHeight
+                    }} 
+                    className="w-full px-3 py-2 border rounded-lg mb-4 overflow-hidden resize-none"
+                    style={{ minHeight: "50px" }}  // Optional: Set minimum height
+                /> */}
+                
 
                 <label className="block mb-2 font-medium">Type</label>
                 <select 
@@ -168,13 +179,12 @@ const ViewItemModal = () => {
                 <div className="mt-4">
                     <h3 className="font-medium mb-2">Comments</h3>
                     {(currentItem?.comments || []).length > 0 ? (
-                    <ul>
+                    <ul className="px-2">
                         {currentItem?.comments?.map((comment) => (
-                        <li key={comment._id} className="mb-2">
+                        <li key={comment._id} className="p-2 flex justify-between border-b">
                             <p>{comment.content}</p>
                             <small>
-                                By {members.find((member) => member._id === comment.commentedBy)?.firstName || 'Unknown'}
-                                {members.find((member) => member._id === comment.commentedBy)?.lastName || 'Unknown'} at {new Date(comment.commentedAt).toLocaleString()}
+                                By {members.find((member) => member._id === comment.commentedBy)?.firstName || 'Admin'} {members.find((member) => member._id === comment.commentedBy)?.lastName || ' '} at {new Date(comment.commentedAt).toLocaleString()}
                             </small>
                         </li>
                         ))}
