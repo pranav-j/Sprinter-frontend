@@ -19,51 +19,83 @@ const Chat = () => {
         receiverId?: string;
         projectId?: string;
         projectGroupId?: string;
-        sentAt?: string
+        sentAt?: string | Date;
     }
 
     const [messageTo, setMessageTo] = useState('');
     const [messages, setMessages] = useState<Message[]>([]);
     const [message, setMessage] = useState('');
 
-    const messagesToShow = messages.filter((message) => message.senderId === messageTo);
+    // const messagesToShow = messages.filter((message) => message.senderId === messageTo || message.receiverId === messageTo);
+    let messagesToShow;
+
+    if(messageTo === currentProjectId) {
+        messagesToShow = messages.filter((message) => message.projectGroupId === messageTo || message.receiverId === messageTo);
+    } else {
+        messagesToShow = messages.filter((message) => (message.senderId === messageTo || message.receiverId === messageTo) && !message.projectGroupId);
+    }
+
+    // useEffect(() => {
+    //     socket.on('private_message', ({ messageContent, senderId, sentAt }) => {
+    //         setMessages((prevMessages) => [
+    //             ...prevMessages,
+    //             { messageContent, senderId, sentAt }
+    //         ]);
+    //         console.log("messages........", messages);
+    //     });
+
+    //     socket.emit('joinProject', { projectId: currentProjectId });
+
+    //     socket.on('receiveMessageFromGroup', ({ messageContent, senderId, sentAt, projectGroupId }) => {
+    //         console.log("Message received in GROUP.............", messageContent);
+    //         setMessages((prevMessages) => [
+    //             ...prevMessages,
+    //             { messageContent, senderId, sentAt, projectGroupId }
+    //         ]);
+    //     })
+    // }, []);
 
     useEffect(() => {
-        socket.on('message', (newMessage) => {
-            // setMessages((prevMessages) => [...prevMessages, newMessage]);
-            console.log("newMessage.........", newMessage);
-            
-        });
-    }, []);
-
-    useEffect(() => {
-        socket.on('private_message', ({ messageContent, senderId, sentAt }) => {
-            setMessages((prevMessages) => [
-                ...prevMessages,
-                { messageContent, senderId, sentAt }
-            ]);
-            console.log("messages........", messages);
-        });
-
+        const handlePrivateMessage = (newMessage: Message) => {
+            setMessages((prevMessages) => [...prevMessages, newMessage]);
+        };
+    
+        const handleGroupMessage = (groupMessage: Message) => {
+            setMessages((prevMessages) => [...prevMessages, groupMessage]);
+        };
+    
+        socket.on('private_message', handlePrivateMessage);
+        socket.on('receiveMessageFromGroup', handleGroupMessage);
         socket.emit('joinProject', { projectId: currentProjectId });
-
-        socket.on('receiveMessageFromGroup', ({ messageContent, senderId, sentAt }) => {
-            console.log("Message received in GROUP.............", messageContent);
-            
-        })
-    }, []);
+    
+        return () => {
+            // Cleanup listeners
+            socket.off('private_message', handlePrivateMessage);
+            socket.off('receiveMessageFromGroup', handleGroupMessage);
+        };
+    }, [currentProjectId]);
+    
+    
 
     const sendMessage = () => {
-        if(messageTo === currentProjectId) {
-            console.log("hehehehhe");
-            socket.emit('sentMessageToGroup', { content: message, projectId: currentProjectId, messageTo });
-            setMessage('');
-        } else {
-            socket.emit('chatMessage', { content: message, projectId: currentProjectId, messageTo });
-            setMessage('');
+        if(message !== '') {
+            if(messageTo === currentProjectId) {
+                console.log("hehehehhe");
+                socket.emit('sentMessageToGroup', { content: message, projectId: currentProjectId, messageTo });
+                setMessages((prevMessages) => [
+                    ...prevMessages,
+                    { messageContent: message, receiverId: messageTo, senderId: loggedInUser?._id, sentAt: new Date().toISOString() }
+                ]);
+                setMessage('');
+            } else {
+                socket.emit('chatMessage', { content: message, projectId: currentProjectId, messageTo });
+                setMessages((prevMessages) => [
+                    ...prevMessages,
+                    { messageContent: message, receiverId: messageTo, senderId: loggedInUser?._id, sentAt: new Date().toISOString() }
+                ]);
+                setMessage('');
+            }
         }
-        // socket.emit('chatMessage', { content: message, projectId: currentProjectId, messageTo });
-        // setMessage('');
     };
 
     return (
@@ -89,13 +121,24 @@ const Chat = () => {
                 {/* Chat Messages */}
                 <div className="flex-1 overflow-y-auto p-2 bg-gray-50">
                     {/* Chat bubbles */}
-                    {messagesToShow.map((message, idx) => (
-                        <div className="flex mb-2" key = {idx}>
-                            <div className="bg-blue-200 p-2 rounded-lg">{message.messageContent}</div>
-                            <span className="text-xs text-gray-500 ml-2 self-end">{message.sentAt}</span>
-                        </div>
-                    ))}
-
+                    {messagesToShow.map((message, idx) => {    
+                            const sender = members.find((member) => member._id === message.senderId)                
+                            return(                               
+                                <div className={`flex flex-col mb-2 ${message.senderId === loggedInUser?._id ? 'items-end' : 'items-start'}`} key={idx}>
+                                    {loggedInUser?._id !== message.senderId &&
+                                        <small className="text-sm font-semibold text-gray-700">{sender?.firstName} {sender?.lastName}</small>
+                                    }                                    
+                                    <div className={`bg-blue-200 p-2 rounded-lg flex ${message.senderId === loggedInUser?._id ? 'justify-end' : 'justify-start'} items-center`}>
+                                        <div>{message.messageContent}</div>
+                                        <span className="text-xs text-gray-500 ml-2 self-end">
+                                            {message.sentAt instanceof Date ? message.sentAt.toLocaleString() : message.sentAt}
+                                        </span>
+                                    </div>
+                                </div>
+                            );
+                            
+                        })
+                    }
                 </div>
 
                 {/* Input field */}
