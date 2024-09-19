@@ -8,6 +8,7 @@ import { fetchSprints } from "@/redux/slices/sprints/sprintsSlice";
 import Item from "./subComponents/item";
 import SprintCard from "./subComponents/sprint";
 import MemberCard from "./subComponents/memberCard";
+import Chat from "./subComponents/chat";
 import DropArea from "./subComponents/dropArea";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -396,7 +397,13 @@ const TabDetails = () => {
         )
     }
 
-
+    if(selectedTab === "Chat") {
+        return(
+            <div className="p-3 w-full h-full bg-[#d9d5d5] overflow-y-auto">
+                <Chat />
+            </div>
+        )
+    }
 
     if(selectedTab === "Members") {
         return(

@@ -10,13 +10,13 @@ const DashboardHeader = () => {
     const dispatch = useAppDispatch();
     const isCollapsed = useAppSelector((state) => state.sidebarReducer.isCollapsed);
     const selectedTab = useAppSelector((state) => state.tabReducer.selectedTab);
-    const loggedInUSer = useAppSelector((state) => state.userReducer.user);
+    const loggedInUser = useAppSelector((state) => state.userReducer.user);
     const currentItemId = useAppSelector((state) => state.ViewItemReducer.currentItemId);
 
     useEffect(() => {
         console.log("isColllapsed",isCollapsed);
         console.log("selectedTab",selectedTab);
-        console.log("loggedInUSer........", loggedInUSer);
+        console.log("loggedInUser........", loggedInUser);
         console.log("currentItemId........", currentItemId);
         
     }, [isCollapsed, selectedTab, currentItemId])
@@ -54,7 +54,13 @@ const DashboardHeader = () => {
                         >
                             Reports
                         </button>
-                        {loggedInUSer?.role === "admin" && (
+                        <button 
+                            onClick={() => dispatch(setTab("Chat"))}
+                            className={`${selectedTab === "Chat" ? "border-b-2 border-black" : ""} px-2`}
+                        >
+                            Chat
+                        </button>
+                        {loggedInUser?.role === "admin" && (
                             <button 
                                 onClick={() => dispatch(setTab("Members"))}
                                 className={`${selectedTab === "Members" ? "border-b-2 border-black" : ""} px-2`}
@@ -66,8 +72,8 @@ const DashboardHeader = () => {
                 </div>
             </div>
             <div className="right flex items-center">
-                <img className="size-10 rounded-full border-2 border-[#d4d5d6]" src={loggedInUSer?.profilePic || "https://robohash.org/111.235.68.162.png"} />
-                <h3 className="pr-8 pl-3">{loggedInUSer?.firstName} {loggedInUSer?.lastName}</h3>
+                <img className="size-10 rounded-full border-2 border-[#d4d5d6]" src={loggedInUser?.profilePic || "https://robohash.org/111.235.68.162.png"} />
+                <h3 className="pr-8 pl-3">{loggedInUser?.firstName} {loggedInUser?.lastName}</h3>
             </div>
         </div>
     )
