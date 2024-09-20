@@ -55,27 +55,38 @@ const Chat = () => {
     //     })
     // }, []);
 
-    useEffect(() => {
-        const handlePrivateMessage = (newMessage: Message) => {
-            setMessages((prevMessages) => [...prevMessages, newMessage]);
-        };
+    const handleIncomingMessage = (groupMessage: Message) => {
+        setMessages((prevMessages) => [...prevMessages, groupMessage]);
+    };
+
+    const handleOldMessage = (oldMessages: Message[]) => {
+        setMessages((prevMessages) => [...prevMessages, ...oldMessages]);
+    };
     
-        const handleGroupMessage = (groupMessage: Message) => {
-            setMessages((prevMessages) => [...prevMessages, groupMessage]);
-        };
-    
-        socket.on('private_message', handlePrivateMessage);
-        socket.on('receiveMessageFromGroup', handleGroupMessage);
+
+    useEffect(() => { 
+        socket.on('private_message', handleIncomingMessage);
+        socket.on('receiveMessageFromGroup', handleIncomingMessage);
         socket.emit('joinProject', { projectId: currentProjectId });
     
         return () => {
             // Cleanup listeners
-            socket.off('private_message', handlePrivateMessage);
-            socket.off('receiveMessageFromGroup', handleGroupMessage);
+            socket.off('private_message', handleIncomingMessage);
+            socket.off('receiveMessageFromGroup', handleIncomingMessage);
         };
     }, [currentProjectId]);
     
-    
+    useEffect(() => {
+        if(messageTo === currentProjectId) {
+            socket.emit('loadOldMessages', { projectGroupId: currentProjectId});
+        } else {
+            socket.emit('loadOldMessages', { senderId: messageTo})
+        }
+        socket.on('loadOldMessages', handleOldMessage);
+        return () => {
+            socket.off('loadOldMessages', handleOldMessage);
+        };
+    }, [messageTo]);
 
     const sendMessage = () => {
         if(message !== '') {
