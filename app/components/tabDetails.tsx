@@ -5,6 +5,7 @@ import { setIsNewTaskModalOpen } from "@/redux/slices/items/newTaskModalSlice";
 import { setIsNewSprintModalOpen } from "@/redux/slices/sprints/newSprintModalSlice";
 import { fetchItems } from "@/redux/slices/items/itemsSlice";
 import { fetchSprints } from "@/redux/slices/sprints/sprintsSlice";
+import { Message, addNewMessage } from "@/redux/slices/chat/chatSlice";
 import Item from "./subComponents/item";
 import SprintCard from "./subComponents/sprint";
 import MemberCard from "./subComponents/memberCard";
@@ -12,6 +13,11 @@ import Chat from "./subComponents/chat";
 import DropArea from "./subComponents/dropArea";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { io } from 'socket.io-client';
+
+const socket = io('http://localhost:3030', {
+    withCredentials: true,
+});
 
 const TabDetails = () => {
     const selectedTab = useAppSelector((state) => state.tabReducer.selectedTab);
@@ -62,152 +68,36 @@ const TabDetails = () => {
           console.error("Error sending invites:", error);
           alert("Error sending invites. Please try again.");
         }
-      };
+    };
 
-    // const items = [
-    //     {
-    //         id: "SP-03",
-    //         type: "Bug",
-    //         assignedTo: "MO",
-    //         description: "As a user, I prefer to see a how-to video on using the appliance.",
-    //         status: "To Do",
-    //         commentsCount: 5,
-    //     },
-    //     {
-    //         id: "SP-03",
-    //         type: "Bug",
-    //         assignedTo: "MO",
-    //         description: "As a user, I prefer to see a how-to video on using the appliance.",
-    //         status: "To Do",
-    //         commentsCount: 8,
-    //     },
-    //     {
-    //         id: "SP-03",
-    //         type: "Bug",
-    //         assignedTo: "MO",
-    //         description: "As a user, I prefer to see a how-to video on using the appliance.",
-    //         status: "To Do",
-    //         commentsCount: 8,
-    //     },
-    //     {
-    //         id: "SP-03",
-    //         type: "Bug",
-    //         assignedTo: "MO",
-    //         description: "As a user, I prefer to see a how-to video on using the appliance.",
-    //         status: "To Do",
-    //         commentsCount: 8,
-    //     },
-    //     {
-    //         id: "SP-03",
-    //         type: "Bug",
-    //         assignedTo: "MO",
-    //         description: "As a user, I prefer to see a how-to video on using the appliance.",
-    //         status: "To Do",
-    //         commentsCount: 8,
-    //     },
-    //     {
-    //         id: "SP-03",
-    //         type: "Bug",
-    //         assignedTo: "MO",
-    //         description: "As a user, I prefer to see a how-to video on using the appliance.",
-    //         status: "To Do",
-    //         commentsCount: 8,
-    //     },
-    //     {
-    //         id: "SP-03",
-    //         type: "Bug",
-    //         assignedTo: "MO",
-    //         description: "As a user, I prefer to see a how-to video on using the appliance.",
-    //         status: "To Do",
-    //         commentsCount: 8,
-    //     },
-    //     {
-    //         id: "SP-03",
-    //         type: "Bug",
-    //         assignedTo: "MO",
-    //         description: "As a user, I prefer to see a how-to video on using the appliance.",
-    //         status: "To Do",
-    //         commentsCount: 8,
-    //     },
-    //     {
-    //         id: "SP-03",
-    //         type: "Bug",
-    //         assignedTo: "MO",
-    //         description: "As a user, I prefer to see a how-to video on using the appliance.",
-    //         status: "To Do",
-    //         commentsCount: 8,
-    //     }
-    // ];
+    // SETTING UP SOCKET--------------------------------------------------------------------------------
 
-    const memberz = [
-        {
-            name: 'John Doe',
-            imageUrl: 'https://robohash.org/johndoe.png',
-            email: 'johndoe@example.com',
-            tasksAssigned: 10,
-            tasksCompleted: 5,
-            tasksInProgress: 2
-        },
-        {
-            name: 'Jane Smith',
-            imageUrl: 'https://robohash.org/janesmith.png',
-            email: 'janesmith@example.com',
-            tasksAssigned: 8,
-            tasksCompleted: 7,
-            tasksInProgress: 1
-        },
-        {
-            name: 'John Doe',
-            imageUrl: 'https://robohash.org/johndoe.png',
-            email: 'johndoe@example.com',
-            tasksAssigned: 10,
-            tasksCompleted: 5,
-            tasksInProgress: 2
-        },
-        {
-            name: 'Jane Smith',
-            imageUrl: 'https://robohash.org/janesmith.png',
-            email: 'janesmith@example.com',
-            tasksAssigned: 8,
-            tasksCompleted: 7,
-            tasksInProgress: 1
-        },
-        {
-            name: 'John Doe',
-            imageUrl: 'https://robohash.org/johndoe.png',
-            email: 'johndoe@example.com',
-            tasksAssigned: 10,
-            tasksCompleted: 5,
-            tasksInProgress: 2
-        },
-        {
-            name: 'Jane Smith',
-            imageUrl: 'https://robohash.org/janesmith.png',
-            email: 'janesmith@example.com',
-            tasksAssigned: 8,
-            tasksCompleted: 7,
-            tasksInProgress: 1
-        },
-        {
-            name: 'John Doe',
-            imageUrl: 'https://robohash.org/johndoe.png',
-            email: 'johndoe@example.com',
-            tasksAssigned: 10,
-            tasksCompleted: 5,
-            tasksInProgress: 2
-        },
-        {
-            name: 'Jane Smith',
-            imageUrl: 'https://robohash.org/janesmith.png',
-            email: 'janesmith@example.com',
-            tasksAssigned: 8,
-            tasksCompleted: 7,
-            tasksInProgress: 1
-        },
-        // Add more mock data as needed
-    ];
+    const handleIncomingMessage = (message: Message) => {
+        console.log("NEW MESSAGE kitty=========> ", message);
+        
+        dispatch(addNewMessage(message))
+        // setMessages((prevMessages) => [...prevMessages, groupMessage]);
+    };
 
+    useEffect(() => { 
+        socket.on('private_message', handleIncomingMessage);
+        socket.on('receiveMessageFromGroup', handleIncomingMessage);
+        socket.emit('joinProject', { projectId: currentProjectId });
+    
+        return () => {
+            // Cleanup listeners
+            socket.off('private_message', handleIncomingMessage);
+            socket.off('receiveMessageFromGroup', handleIncomingMessage);
+        };
+    }, [currentProjectId]);
 
+    // REMOVE this 
+    const messages = useAppSelector((state) => state.chatReducer.messages);
+    useEffect(() => {
+        console.log("Messages in REDUX......", messages);        
+    }, [messages]);
+
+    // -------------------------------------------------------------------------------------------------
 
     // --------------------------------------------------
     // const [itemz, setItemz] = useState([]);
@@ -400,7 +290,7 @@ const TabDetails = () => {
     if(selectedTab === "Chat") {
         return(
             <div className="p-3 w-full h-full bg-[#d9d5d5] overflow-y-auto">
-                <Chat />
+                <Chat socket={socket} />
             </div>
         )
     }

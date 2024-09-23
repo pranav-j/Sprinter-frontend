@@ -1,17 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
-import { useAppSelector } from '@/redux/hooks';
+import { useAppSelector, useAppDispatch } from '@/redux/hooks';
 
-const socket = io('http://localhost:3030', {
-    withCredentials: true,
-});
+import { Socket } from "socket.io-client"; // import Socket type
+import { addNewMessage, addOldMessages } from '@/redux/slices/chat/chatSlice';
 
-const Chat = () => {
+interface ChatProps {
+    socket: Socket;
+}
+
+// const socket = io('http://localhost:3030', {
+//     withCredentials: true,
+// });
+
+const Chat = ({ socket }: ChatProps) => {
     const members = useAppSelector((state) => state.MembersReducer.members);
     const projects = useAppSelector((state) => state.projectsReducer.projects);
     const loggedInUser = useAppSelector((state) => state.userReducer.user);
     const currentProjectId = useAppSelector((state) => state.currentProjectIdReducer.currentProjectId);
     const currentProject = projects.find((project) => project._id ===   currentProjectId) || null;
+
+    const dispatch = useAppDispatch();
 
     interface Message {
         messageContent: string;
@@ -22,59 +31,25 @@ const Chat = () => {
         sentAt?: string | Date;
     }
 
+    const messagez = useAppSelector((state) => state.chatReducer.messages);
+
     const [messageTo, setMessageTo] = useState('');
-    const [messages, setMessages] = useState<Message[]>([]);
     const [message, setMessage] = useState('');
 
     // const messagesToShow = messages.filter((message) => message.senderId === messageTo || message.receiverId === messageTo);
     let messagesToShow;
 
     if(messageTo === currentProjectId) {
-        messagesToShow = messages.filter((message) => message.projectGroupId === messageTo || message.receiverId === messageTo);
+        messagesToShow = messagez.filter((message) => message.projectGroupId === messageTo || message.receiverId === messageTo);
     } else {
-        messagesToShow = messages.filter((message) => (message.senderId === messageTo || message.receiverId === messageTo) && !message.projectGroupId);
+        messagesToShow = messagez.filter((message) => (message.senderId === messageTo || message.receiverId === messageTo) && !message.projectGroupId);
     }
 
-    // useEffect(() => {
-    //     socket.on('private_message', ({ messageContent, senderId, sentAt }) => {
-    //         setMessages((prevMessages) => [
-    //             ...prevMessages,
-    //             { messageContent, senderId, sentAt }
-    //         ]);
-    //         console.log("messages........", messages);
-    //     });
-
-    //     socket.emit('joinProject', { projectId: currentProjectId });
-
-    //     socket.on('receiveMessageFromGroup', ({ messageContent, senderId, sentAt, projectGroupId }) => {
-    //         console.log("Message received in GROUP.............", messageContent);
-    //         setMessages((prevMessages) => [
-    //             ...prevMessages,
-    //             { messageContent, senderId, sentAt, projectGroupId }
-    //         ]);
-    //     })
-    // }, []);
-
-    const handleIncomingMessage = (groupMessage: Message) => {
-        setMessages((prevMessages) => [...prevMessages, groupMessage]);
-    };
-
     const handleOldMessage = (oldMessages: Message[]) => {
-        setMessages((prevMessages) => [...prevMessages, ...oldMessages]);
+        // setMessages((prevMessages) => [...prevMessages, ...oldMessages]);
+        dispatch(addOldMessages(oldMessages));
     };
     
-
-    useEffect(() => { 
-        socket.on('private_message', handleIncomingMessage);
-        socket.on('receiveMessageFromGroup', handleIncomingMessage);
-        socket.emit('joinProject', { projectId: currentProjectId });
-    
-        return () => {
-            // Cleanup listeners
-            socket.off('private_message', handleIncomingMessage);
-            socket.off('receiveMessageFromGroup', handleIncomingMessage);
-        };
-    }, [currentProjectId]);
     
     useEffect(() => {
         if(messageTo === currentProjectId) {
@@ -90,20 +65,15 @@ const Chat = () => {
 
     const sendMessage = () => {
         if(message !== '') {
+            const messageWithMetadata = { messageContent: message, receiverId: messageTo, senderId: loggedInUser?._id, sentAt: new Date().toISOString() };
             if(messageTo === currentProjectId) {
                 console.log("hehehehhe");
                 socket.emit('sentMessageToGroup', { content: message, projectId: currentProjectId, messageTo });
-                setMessages((prevMessages) => [
-                    ...prevMessages,
-                    { messageContent: message, receiverId: messageTo, senderId: loggedInUser?._id, sentAt: new Date().toISOString() }
-                ]);
+                dispatch(addNewMessage(messageWithMetadata));
                 setMessage('');
             } else {
                 socket.emit('chatMessage', { content: message, projectId: currentProjectId, messageTo });
-                setMessages((prevMessages) => [
-                    ...prevMessages,
-                    { messageContent: message, receiverId: messageTo, senderId: loggedInUser?._id, sentAt: new Date().toISOString() }
-                ]);
+                dispatch(addNewMessage(messageWithMetadata));
                 setMessage('');
             }
         }
