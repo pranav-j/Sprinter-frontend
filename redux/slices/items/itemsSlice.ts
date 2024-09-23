@@ -19,6 +19,7 @@ export interface Itemm {
     _id: string;
     projectId: string;
     sprintId?: string;
+    createdBy?: string;
     title: string;
     description: string;
     type: string;

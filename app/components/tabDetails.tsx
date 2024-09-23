@@ -24,6 +24,7 @@ const TabDetails = () => {
     const currentProjectId = useAppSelector((state) => state.currentProjectIdReducer.currentProjectId);
     const loggedInUser = useAppSelector((state) => state.userReducer.user);
     const members = useAppSelector((state) => state.MembersReducer.members);
+    const deleteItemId =useAppSelector((state) => state.deleteItemReducer.deleteItemId);
     const dispatch = useAppDispatch();
 
     const sprints = useAppSelector((state) => state.sprintsReducer.sprints);
@@ -74,9 +75,7 @@ const TabDetails = () => {
 
     const handleIncomingMessage = (message: Message) => {
         console.log("NEW MESSAGE kitty=========> ", message);
-        
         dispatch(addNewMessage(message))
-        // setMessages((prevMessages) => [...prevMessages, groupMessage]);
     };
 
     useEffect(() => { 
@@ -145,17 +144,20 @@ const TabDetails = () => {
         moveItemToBacklog = true;
     };
 
-    useEffect(() => {
-        console.log("draggableitemId........", draggableitemId);
-        console.log("draggableItemSprintId........", draggableItemSprintId);        
-    }, [draggableitemId, draggableItemSprintId])
-
+    // useEffect(() => {
+    //     console.log("draggableitemId........", draggableitemId);
+    //     console.log("draggableItemSprintId........", draggableItemSprintId);        
+    // }, [draggableitemId, draggableItemSprintId])
 
 
     // useEffect(() => {
     //     console.log('Sprints..........', sprints);
         
     // }, [sprints])
+
+    useEffect(() => {
+        console.log("deleteItemId............", deleteItemId);        
+    }, [deleteItemId]);
 
     useEffect(() => {
         dispatch(fetchItems(currentProjectId));

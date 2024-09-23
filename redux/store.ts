@@ -18,6 +18,7 @@ import draggableItemReducer from "./slices/drag/draggedItemId";
 import draggableItemSprintReducer from "./slices/drag/draggedItemSprintId"
 import MembersReducer from "./slices/membersSlice";
 import ViewItemReducer from "./slices/items/viewItemModal";
+import deleteItemReducer from "./slices/items/deleteItemIdSlice";
 import chatReducer from "./slices/chat/chatSlice"
 
 const persistConfig = {
@@ -41,7 +42,8 @@ const rootReducer = combineReducers({
     draggableItemSprintReducer,
     MembersReducer,
     ViewItemReducer,
-    chatReducer
+    deleteItemReducer,
+    chatReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
