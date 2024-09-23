@@ -8,6 +8,7 @@ import NewProject from "../components/subComponents/newProject";
 import NewTaskModal from "../components/subComponents/newItem";
 import NewSprintModal from "../components/subComponents/newSprint";
 import ViewItemModal from "../components/subComponents/viewItem";
+import DeleteItemModal from "../components/subComponents/deleteItem";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { fetchMembers } from "@/redux/slices/membersSlice";
 
@@ -18,6 +19,7 @@ export default function Dashboard() {
     const isTaskModalOpen = useAppSelector((state) => state.newTaskModelOpenReducer.isNewTaskModalOpen);
     const isNewSprintModalOpen = useAppSelector((state) => state.newSprintModalOpenReducer.isNewSprintModalOpen);
     const currentItemId = useAppSelector((state) => state.ViewItemReducer.currentItemId);
+    const deleteItemId =useAppSelector((state) => state.deleteItemReducer.deleteItemId);
 
     const currentProjectId = useAppSelector((state) => state.currentProjectIdReducer.currentProjectId);
     const members = useAppSelector((state) => state.MembersReducer.members);
@@ -78,6 +80,13 @@ export default function Dashboard() {
                     <ViewItemModal />
                 </div>
                 ) : null                
+            }
+            {
+                deleteItemId ? (
+                    <div className="h-screen absolute bottom-0 left-0">
+                        <DeleteItemModal />
+                    </div>
+                ) : null 
             }
         </div>
     )
