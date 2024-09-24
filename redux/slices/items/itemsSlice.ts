@@ -37,20 +37,24 @@ export interface Itemm {
 interface ItemsSlice {
     fetchStatus: 'idle' | 'pending' | 'fulfilled' | 'rejected';
     updateItemStatus: 'idle' | 'pending' | 'fulfilled' | 'rejected';
+    deleteItemStatus: 'idle' | 'pending' | 'fulfilled' | 'rejected';
     items: Itemm[];
     errorFetchingItems: string | null;
     errorCreatingItem: string | null;
     errorUpdatingItem: string | null;
+    errorDeletingItem: string | null;
     errorCommenting: string | null;
 };
 
 const initialState: ItemsSlice = {
     fetchStatus: 'idle',
     updateItemStatus: 'idle',
+    deleteItemStatus: 'idle',
     items: [],
     errorFetchingItems: null,
     errorCreatingItem: null,
     errorUpdatingItem: null,
+    errorDeletingItem: null,
     errorCommenting: null,
 };
 
@@ -103,7 +107,15 @@ export const addComment = createAsyncThunk(
         );
         return response.data;
     }
-)
+);
+
+export const deleteItem = createAsyncThunk<string, string>(
+    'items/deleteItem',
+    async(itemId: string) => {
+        await axios.delete(`http://localhost:3030/api/item/${itemId}`, { withCredentials: true });
+        return itemId;
+    }
+);
 
 const itemsSlice = createSlice({
     name: 'items',
@@ -151,6 +163,17 @@ const itemsSlice = createSlice({
                 if (index !== -1) {
                     state.items[index] = action.payload;
                 }
+            })
+            .addCase((deleteItem.pending), (state) => {
+                state.deleteItemStatus = 'pending';
+            })
+            .addCase(deleteItem.fulfilled, (state, action) => {
+                state.items = state.items.filter(item => item._id !== action.payload);
+                state.deleteItemStatus = 'fulfilled';
+            })
+            .addCase(deleteItem.rejected, (state, action) => {
+                state.deleteItemStatus = 'rejected';
+                state.errorDeletingItem = action.error.message || 'Failed to delete item';
             })
     },
 });

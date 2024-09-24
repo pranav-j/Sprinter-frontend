@@ -1,11 +1,22 @@
-import { useAppDispatch } from "@/redux/hooks";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { resetDeleteItemId } from "@/redux/slices/items/deleteItemIdSlice";
+import { deleteItem } from "@/redux/slices/items/itemsSlice";
 
 const DeleteItemModal = () => {
-    const dispatch = useAppDispatch(); 
+    const dispatch = useAppDispatch();
+    const deleteItemId = useAppSelector((state) => state.deleteItemReducer.deleteItemId);
+    const deleteItemStatus = useAppSelector((state) =>state.itemsReducer.deleteItemStatus);
+
     const handleCancel = () => {
         dispatch(resetDeleteItemId());
-    }
+    };
+
+    const handleDelete = () => {
+        if (deleteItemId) {
+            dispatch(deleteItem(deleteItemId));
+        };
+        dispatch(resetDeleteItemId());
+    };
 
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
@@ -20,7 +31,7 @@ const DeleteItemModal = () => {
                         Cancel
                     </button>
                     <button
-                        // onClick={onConfirm}
+                        onClick={handleDelete}
                         className="bg-red-500 text-white px-4 py-2 rounded"
                     >
                         Delete

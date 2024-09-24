@@ -19,7 +19,7 @@ export default function Dashboard() {
     const isTaskModalOpen = useAppSelector((state) => state.newTaskModelOpenReducer.isNewTaskModalOpen);
     const isNewSprintModalOpen = useAppSelector((state) => state.newSprintModalOpenReducer.isNewSprintModalOpen);
     const currentItemId = useAppSelector((state) => state.ViewItemReducer.currentItemId);
-    const deleteItemId =useAppSelector((state) => state.deleteItemReducer.deleteItemId);
+    const deleteItemId = useAppSelector((state) => state.deleteItemReducer.deleteItemId);
 
     const currentProjectId = useAppSelector((state) => state.currentProjectIdReducer.currentProjectId);
     const members = useAppSelector((state) => state.MembersReducer.members);

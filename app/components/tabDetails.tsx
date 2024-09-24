@@ -14,6 +14,7 @@ import DropArea from "./subComponents/dropArea";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { io } from 'socket.io-client';
+import { resetDeleteItemId } from "@/redux/slices/items/deleteItemIdSlice";
 
 const socket = io('http://localhost:3030', {
     withCredentials: true,
@@ -25,6 +26,7 @@ const TabDetails = () => {
     const loggedInUser = useAppSelector((state) => state.userReducer.user);
     const members = useAppSelector((state) => state.MembersReducer.members);
     const deleteItemId =useAppSelector((state) => state.deleteItemReducer.deleteItemId);
+    const deleteItemStatus = useAppSelector((state) =>state.itemsReducer.deleteItemStatus);
     const dispatch = useAppDispatch();
 
     const sprints = useAppSelector((state) => state.sprintsReducer.sprints);
@@ -155,8 +157,10 @@ const TabDetails = () => {
         
     // }, [sprints])
 
+
+
     useEffect(() => {
-        console.log("deleteItemId............", deleteItemId);        
+        console.log("deleteItemId............", deleteItemId);       
     }, [deleteItemId]);
 
     useEffect(() => {
