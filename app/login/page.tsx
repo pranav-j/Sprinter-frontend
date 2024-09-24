@@ -14,7 +14,8 @@ export default function Home() {
   const [password, setPassword] = useState<string>("");
   const router = useRouter();
 
-
+  const [emailError, setEmailError] = useState<string>("");
+  const [passwordError, setPasswordError] = useState<string>("");
 
   const dispatch = useAppDispatch();
   // const isLoggedIn = useAppSelector((state) => state.loggedInReducer.isLoggedIn);
@@ -50,9 +51,32 @@ export default function Home() {
     console.log("loggedInUser..............", loggedInUser);    
   }, [loggedInUser]);
 
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
   const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    try {
+
+    setEmailError("");
+    setPasswordError("");
+
+    let isValid = true;
+    if (!email) {
+      setEmailError("Email is required");
+      isValid = false;
+    } else if (!validateEmail(email)) {
+      setEmailError("Please enter a valid email address");
+      isValid = false;
+    }
+
+    if (!password) {
+      setPasswordError("Password is required");
+      isValid = false;
+    }
+    if (isValid) {
+      try {
         dispatch(login({email, password}))
         .unwrap()
         .then(() => {
@@ -60,7 +84,9 @@ export default function Home() {
         })
       } catch (error) {
         console.error("Error logging in:", error);
-      }  
+      }
+    }
+  
   };
 
   return (
@@ -76,14 +102,16 @@ export default function Home() {
         </div>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <input
+          <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               id="email"
-              className="mt-4 block w-full py-2 border-b-2 border-gray-300 focus:outline-none focus:border-blue-500 sm:text-sm   text-black"
+              className={`mt-4 block w-full py-2 border-b-2 focus:outline-none focus:border-blue-500 sm:text-sm text-black`}
               placeholder="Email"
             />
+            {/* Display email error */}
+            {emailError && <p className="text-red-500 text-xs">{emailError}</p>}
           </div>
           <div className="mb-4">
             <div className="relative">
@@ -138,20 +166,8 @@ export default function Home() {
                 )}
               </button>
             </div>
+            {passwordError && <p className="text-red-500 text-xs">{passwordError}</p>}
           </div>
-          {/* <div className="flex items-center mb-4">
-            <input
-              id="remember_me"
-              type="checkbox"
-              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded  "
-            />
-            <label
-              htmlFor="remember_me"
-              className="ml-2 block text-sm text-gray-900  "
-            >
-              Remember me
-            </label>
-          </div> */}
           <div className="text-sm">
             <a
               href="#"
