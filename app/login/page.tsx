@@ -1,12 +1,9 @@
 "use client";
-import axios from "axios";
-// import { useRouter } from "next/router";
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from "react";
 import { login } from "@/redux/slices/userSlice";
 
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-// import { setLoggedIn } from "@/redux/slices/userdinSlice";
 
 export default function Home() {
   const [showPassword, setShowPassword] = useState<boolean>(false);

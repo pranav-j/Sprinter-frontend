@@ -13,37 +13,82 @@ const Signup: React.FC = () => {
   const [otpSent, setOtpSent] = useState<boolean>(false);
   const [otp, setOtp] = useState<string>("");
 
+  const [firstNameError, setFirstNameError] = useState<string>("");
+  const [lastNameError, setLastNameError] = useState<string>("");
+  const [emailError, setEmailError] = useState<string>("");
+  const [passwordError, setPasswordError] = useState<string>("");
+
+
   const router = useRouter();
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    try {
-      const formData = new FormData();
-      formData.append("firstName", firstName);
-      formData.append("lastName", lastName);
-      formData.append("email", email);
-      formData.append("password", password);
 
-      console.log(firstName);
-      
+    setFirstNameError("");
+    setLastNameError("");
+    setEmailError("");
+    setPasswordError("");
 
-      if (image) {
-        formData.append("profilePic", image);
-      }
+    let isValid = true;
 
-      const response = await axios.post("http://localhost:3030/api/signup", formData);
-      if (response.status === 200) {
-        setOtpSent(true);
-      } else {
-        console.log("Signup failed");
-      }
-    } catch (error) {
-      console.error("Error signing up:", error);
+    if (!email) {
+      setEmailError("Email is required");
+      isValid = false;
+    } else if (!validateEmail(email)) {
+      setEmailError("Please enter a valid email address");
+      isValid = false;
     }
+
+    if (!password || password.length < 4) {
+      setPasswordError("Password is required and must be at least 4 letters long");
+      isValid = false;
+    }
+
+    if (!firstName) {
+      setFirstNameError("First Name is required");
+      isValid = false;
+    }
+
+    if (!lastName) {
+      setLastNameError("Last Name is required");
+      isValid = false;
+    }
+
+    if(isValid) {
+      try {
+        const formData = new FormData();
+        formData.append("firstName", firstName);
+        formData.append("lastName", lastName);
+        formData.append("email", email);
+        formData.append("password", password);
+  
+        console.log(firstName);
+        
+  
+        if (image) {
+          formData.append("profilePic", image);
+        }
+  
+        const response = await axios.post("http://localhost:3030/api/signup", formData);
+        if (response.status === 200) {
+          setOtpSent(true);
+        } else {
+          console.log("Signup failed");
+        }
+      } catch (error) {
+        console.error("Error signing up:", error);
+      }
+    }
+
   };
 
   const handleOtpSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -80,8 +125,8 @@ const Signup: React.FC = () => {
                 onChange={(e) => setFirstName(e.target.value)}
                 className="mt-4 block w-full py-2 border-b-2 border-gray-300 focus:outline-none focus:border-blue-500 sm:text-sm text-black"
                 placeholder="First Name"
-                required
               />
+              {firstNameError && <p className="text-red-500 text-xs">{firstNameError}</p>}
             </div>
             <div className="mb-4">
               <input
@@ -90,8 +135,8 @@ const Signup: React.FC = () => {
                 onChange={(e) => setLastName(e.target.value)}
                 className="mt-4 block w-full py-2 border-b-2 border-gray-300 focus:outline-none focus:border-blue-500 sm:text-sm text-black"
                 placeholder="Last Name"
-                required
               />
+              {lastNameError && <p className="text-red-500 text-xs">{lastNameError}</p>}
             </div>
             <div className="mb-4">
               <input
@@ -100,8 +145,8 @@ const Signup: React.FC = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 className="mt-4 block w-full py-2 border-b-2 border-gray-300 focus:outline-none focus:border-blue-500 sm:text-sm text-black"
                 placeholder="Email"
-                required
               />
+              {emailError && <p className="text-red-500 text-xs">{emailError}</p>}
             </div>
             <div className="mb-4">
               <div className="relative">
@@ -111,8 +156,8 @@ const Signup: React.FC = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   className="mt-4 block w-full py-2 border-b-2 border-gray-300 focus:outline-none focus:border-blue-500 sm:text-sm text-black"
                   placeholder="Password"
-                  required
                 />
+                {passwordError && <p className="text-red-500 text-xs">{passwordError}</p>}
                 <button
                   type="button"
                   className="absolute inset-y-0 right-0 px-3 flex items-center"
