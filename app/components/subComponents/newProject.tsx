@@ -6,11 +6,14 @@ import { setIsNewProjectModalOpen } from "@/redux/slices/projects/newProjectModa
 import { createProject } from "@/redux/slices/projects/projectsSlice";
 
 const NewProjectModal = () => {
-    const [ failedPostCreation, setFailedPostCreation ] = useState<boolean>(false);
-    const [ title, setTitle ] = useState<string>("");
-    const [ description, setDescription ] = useState<string>("");
+    const [failedPostCreation, setFailedPostCreation] = useState<boolean>(false);
+    const [title, setTitle] = useState<string>("");
+    const [description, setDescription] = useState<string>("");
     const [startDate, setStartDate] = useState<string>("");
     const [endDate, setEndDate] = useState<string>("");
+
+    const [titleError, setTitleError] = useState<string>("");
+
     const dispatch = useAppDispatch();
 
     useEffect(() => {
@@ -40,13 +43,25 @@ const NewProjectModal = () => {
 
     const handleSubmit = async(e: React.FormEvent) => {
         e.preventDefault();
-        try {
-            await dispatch(createProject({title, description, startDate, endDate }))
-            dispatch(setIsNewProjectModalOpen());
-            setFailedPostCreation(false);
-        } catch (error) {
-            setFailedPostCreation(true);
-            console.error("Error creating project:", error);
+
+        setTitleError("");
+
+        let isValid = true;
+
+        if(!title) {
+            setTitleError("Project Title required");
+            isValid = false;
+        }
+
+        if(isValid) {
+            try {
+                await dispatch(createProject({title, description, startDate, endDate }))
+                dispatch(setIsNewProjectModalOpen());
+                setFailedPostCreation(false);
+            } catch (error) {
+                setFailedPostCreation(true);
+                console.error("Error creating project:", error);
+            }
         }
     };
 
@@ -67,6 +82,7 @@ const NewProjectModal = () => {
                             placeholder="Enter project title"
                             className="w-full px-3 py-2 border rounded-lg"
                         />
+                        {titleError && <p className="text-red-500 text-xs">{titleError}</p>}
                     </div>
                     <div className="mb-4">
                         <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="projectDescription">

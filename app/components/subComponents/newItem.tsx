@@ -18,6 +18,9 @@ const NewTaskModal = () => {
     const [assignee, setAssignee] = useState<string>("");
     const [files, setFiles] = useState<any[]>([]);
 
+    const [titleError, setTitleError] = useState<string>("");
+    const [descriptionError, setDescriptionError] = useState<string>("");
+
     const currentProjectId = useAppSelector((state) => state.currentProjectIdReducer.currentProjectId);
     const members = useAppSelector((state) => state.MembersReducer.members);
     
@@ -67,6 +70,21 @@ const NewTaskModal = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        setTitleError("");
+        setDescriptionError("");
+
+        let isValid = true;
+
+        if(!title) {
+            setTitleError("Task Title required");
+            isValid = false;
+        };
+
+        if(!description) {
+            setDescriptionError("Description required");
+            isValid = false;
+        };
         
         const formData = new FormData();
         formData.append("projectId", currentProjectId);
@@ -82,14 +100,17 @@ const NewTaskModal = () => {
             formData.append("attachments", file);
         });
     
-        try {
-            await dispatch(createItem(formData));
-            dispatch(setIsNewTaskModalOpen());
-            setFailedTaskCreation(false);
-        } catch (error) {
-            setFailedTaskCreation(true);
-            console.error("Error creating task:", error);
+        if(isValid) {
+            try {
+                await dispatch(createItem(formData));
+                dispatch(setIsNewTaskModalOpen());
+                setFailedTaskCreation(false);
+            } catch (error) {
+                setFailedTaskCreation(true);
+                console.error("Error creating task:", error);
+            }
         }
+
     };
     
 
@@ -110,6 +131,7 @@ const NewTaskModal = () => {
                             placeholder="Enter task title"
                             className="w-full px-3 py-2 border rounded-lg"
                         />
+                        {titleError && <p className="text-red-500 text-xs">{titleError}</p>}
                     </div>
                     <div className="mb-4">
                         <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="taskDescription">
@@ -121,6 +143,7 @@ const NewTaskModal = () => {
                             placeholder="Enter task description"
                             className="w-full px-3 py-2 border rounded-lg"
                         />
+                        {descriptionError && <p className="text-red-500 text-xs">{descriptionError}</p>}
                     </div>
                     <div className="mb-4">
                         <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="taskType">

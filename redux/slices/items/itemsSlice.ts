@@ -10,7 +10,7 @@ export interface Attachment {
 
 export interface Comment {
     _id: string;
-    commentedBy: string; // User ID
+    commentedBy: string;
     content: string;
     commentedAt: string;
 };
@@ -117,6 +117,32 @@ export const deleteItem = createAsyncThunk<string, string>(
     }
 );
 
+export const moveItem = createAsyncThunk(
+    'items/moveItem',
+    async ({ insertAt, draggableItemId, draggableItemSprintId, moveToSprintId, moveItemToBacklog, currentProjectId }: {
+      insertAt?: number,
+      draggableItemId?: string | null,
+      draggableItemSprintId?: string | null,
+      moveToSprintId?: string | null,
+      moveItemToBacklog?: boolean,
+      currentProjectId?: string,
+    }) => {
+      const response = await axios.post(
+        "http://localhost:3030/api/moveItem",
+        {
+          insertAt,
+          itemId: draggableItemId,
+          itemSprintId: draggableItemSprintId,
+          moveToSprintId,
+          moveItemToBacklog,
+          projectId: currentProjectId,
+        },
+        { withCredentials: true }
+      );
+      return response.data;
+    }
+);
+
 const itemsSlice = createSlice({
     name: 'items',
     initialState,
@@ -174,6 +200,18 @@ const itemsSlice = createSlice({
             .addCase(deleteItem.rejected, (state, action) => {
                 state.deleteItemStatus = 'rejected';
                 state.errorDeletingItem = action.error.message || 'Failed to delete item';
+            })
+            .addCase(moveItem.fulfilled, (state, action) => {
+                const index = state.items.findIndex(item => item._id === action.payload.updatedItem._id);
+                if(index !== -1) {
+                    state.items[index] = action.payload.updatedItem
+                }
+                action.payload.updatedOrder.forEach((itemOrder: any) => {
+                    const index = state.items.findIndex(item => item._id === itemOrder._id);
+                    if(index !== -1) {
+                        state.items[index].order = itemOrder.order;
+                    }
+                });
             })
     },
 });

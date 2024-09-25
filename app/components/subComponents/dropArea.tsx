@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { useAppSelector } from "@/redux/hooks";
+import { useAppSelector, useAppDispatch } from "@/redux/hooks";
 import axios from "axios";
+import { moveItem } from "@/redux/slices/items/itemsSlice";
 
 interface DropAreaProp {
     index: number;
@@ -11,11 +12,11 @@ interface DropAreaProp {
 const DropArea = ({index, moveToSprintId = null, moveItemToBacklog = false}: DropAreaProp) => {
     const [showDropArea, setShowDropArea] = useState<boolean>(false);
 
-    const draggableitemId = useAppSelector((state) => state.draggableItemReducer.dreggedItemId);
+    const draggableItemId = useAppSelector((state) => state.draggableItemReducer.dreggedItemId);
     const draggableItemSprintId = useAppSelector((state) =>state.draggableItemSprintReducer.draggedItemSprintId);
     const currentProjectId = useAppSelector((state) => state.currentProjectIdReducer.currentProjectId);
     
-
+    const dispatch = useAppDispatch();
 
     useEffect(() => {
         console.log("showDropArea............", showDropArea);
@@ -25,22 +26,30 @@ const DropArea = ({index, moveToSprintId = null, moveItemToBacklog = false}: Dro
         e.preventDefault();
         // e.stopPropagation();
         setShowDropArea(false);
-        try {
-            const response = await axios.post("http://localhost:3030/api/moveItem", 
-                {
-                    insertAt: index,
-                    itemId: draggableitemId,
-                    itemSprintId: draggableItemSprintId,
-                    moveToSprintId,
-                    moveItemToBacklog,
-                    projectId: currentProjectId
-                }, 
-                { withCredentials: true }
-            );
-            console.log("RESPONSE TEST.......", response);
-        } catch (error) {
-            console.error("Error in moving item:", error);
-        }
+        // try {
+        //     const response = await axios.post("http://localhost:3030/api/moveItem", 
+        //         {
+        //             insertAt: index,
+        //             itemId: draggableitemId,
+        //             itemSprintId: draggableItemSprintId,
+        //             moveToSprintId,
+        //             moveItemToBacklog,
+        //             projectId: currentProjectId
+        //         }, 
+        //         { withCredentials: true }
+        //     );
+        //     console.log("RESPONSE TEST.......", response);
+        // } catch (error) {
+        //     console.error("Error in moving item:", error);
+        // }
+        dispatch(moveItem({
+            insertAt: index,
+            draggableItemId,
+            draggableItemSprintId,
+            moveToSprintId,
+            moveItemToBacklog,
+            currentProjectId
+          }));
     };
 
     return (

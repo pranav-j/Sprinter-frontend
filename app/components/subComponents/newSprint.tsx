@@ -10,6 +10,9 @@ const NewSprintModal = () => {
     const [description, setDescription] = useState<string>("");
     const [durationInWeeks, setDurationInWeeks] = useState<number>(1);
     const [failedSprintCreation, setFailedSprintCreation] = useState<boolean>(false);
+
+    const [sprintNameError, setSprintNameError] = useState<string>("");
+
     const currentProjectId = useAppSelector((state) => state.currentProjectIdReducer.currentProjectId);
 
     const dispatch = useAppDispatch();
@@ -44,18 +47,30 @@ const NewSprintModal = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        try {
-            // const response = await axios.post("http://localhost:3030/api/sprint", 
-            //     { sprintName, description, durationInWeeks, projectId: currentProjectId }, 
-            //     { withCredentials: true }
-            // );
-            await dispatch(createSprint({sprintName, description, durationInWeeks, projectId: currentProjectId}));
-            // await dispatch(createSprint({ sprintName, description, durationinweeksInWeeks: durationinweeks }));
-            dispatch(setIsNewSprintModalOpen());
-            setFailedSprintCreation(false);
-        } catch (error) {
-            setFailedSprintCreation(true);
-            console.error("Error creating sprint:", error);
+
+        setSprintNameError("");
+
+        let isValid = true;
+
+        if(!sprintName) {
+            setSprintNameError("Sprint name is required");
+            isValid = false;
+        }
+
+        if(isValid) {
+            try {
+                // const response = await axios.post("http://localhost:3030/api/sprint", 
+                //     { sprintName, description, durationInWeeks, projectId: currentProjectId }, 
+                //     { withCredentials: true }
+                // );
+                await dispatch(createSprint({sprintName, description, durationInWeeks, projectId: currentProjectId}));
+                // await dispatch(createSprint({ sprintName, description, durationinweeksInWeeks: durationinweeks }));
+                dispatch(setIsNewSprintModalOpen());
+                setFailedSprintCreation(false);
+            } catch (error) {
+                setFailedSprintCreation(true);
+                console.error("Error creating sprint:", error);
+            }
         }
     };
 
@@ -67,15 +82,16 @@ const NewSprintModal = () => {
                 <form onSubmit={handleSubmit}>
                     <div className="mb-4">
                         <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="sprintSprintName">
-                            Sprint
+                            Sprint Name
                         </label>
                         <input
                             value={sprintName}
                             onChange={(e) => setSprintName(e.target.value)}
                             type="text"
-                            placeholder="Enter sprint sprintname"
+                            placeholder="Enter sprint name"
                             className="w-full px-3 py-2 border rounded-lg"
                         />
+                        {sprintNameError && <p className="text-red-500 text-xs">{sprintNameError}</p>}
                     </div>
                     <div className="mb-4">
                         <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="sprintDescription">
