@@ -14,6 +14,11 @@ export default function InviteSignup () {
     const [showTempPassword, setShowTempPassword] = useState<boolean>(false);
     const [showNewPassword, setShowNewPassword] = useState<boolean>(false);
 
+    const [firstNameError, setFirstNameError] = useState<string>("");
+    const [lastNameError, setLastNameError] = useState<string>("");
+    const [emailError, setEmailError] = useState<string>("");
+    const [newPasswordError, setNewPasswordError] = useState<string>("");
+    const [tempPasswordError, setTempPasswordError] = useState<string>("");
   
     const router = useRouter();
   
@@ -24,30 +29,75 @@ export default function InviteSignup () {
     const toggleNewPasswordVisibility = () => {
         setShowNewPassword(!showNewPassword);
     };
+
+    const validateEmail = (email: string) => {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(email);
+    };
   
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-      try {
-        const formData = new FormData();
-        formData.append("email", email);
-        formData.append("tempPassword", tempPassword);
-        formData.append("newPassword", newPassword);
-        formData.append("firstName", firstName);
-        formData.append("lastName", lastName);
-  
-        if (image) {
-          formData.append("profilePic", image);
-        }
-  
-        const response = await axios.post("http://localhost:3030/api/inviteSignup", formData);
-        if (response.status === 200) {
-          router.push("/login");
-        } else {
-          console.log("Invite signup failed");
-        }
-      } catch (error) {
-        console.error("Error during invite signup:", error);
+
+      setFirstNameError("");
+      setLastNameError("");
+      setEmailError("");
+      setNewPasswordError("");
+      setTempPasswordError("");
+
+      let isValid = true;
+
+      if (!email) {
+        setEmailError("Email is required");
+        isValid = false;
+      } else if (!validateEmail(email)) {
+        setEmailError("Please enter a valid email address");
+        isValid = false;
       }
+
+      if (!newPassword || newPassword.length < 4) {
+        setNewPasswordError("Password is required and must be at least 4 letters long");
+        isValid = false;
+      }
+
+      if (!tempPassword || tempPassword.length < 4) {
+        setTempPasswordError("Password is required and must be at least 4 letters long");
+        isValid = false;
+      }
+
+      if (!firstName) {
+        setFirstNameError("First Name is required");
+        isValid = false;
+      }
+  
+      if (!lastName) {
+        setLastNameError("Last Name is required");
+        isValid = false;
+      }
+
+      if(isValid) {
+        try {
+          const formData = new FormData();
+          formData.append("email", email);
+          formData.append("tempPassword", tempPassword);
+          formData.append("newPassword", newPassword);
+          formData.append("firstName", firstName);
+          formData.append("lastName", lastName);
+    
+          if (image) {
+            formData.append("profilePic", image);
+          }
+    
+          const response = await axios.post("http://localhost:3030/api/inviteSignup", formData);
+          if (response.status === 200) {
+            router.push("/login");
+          } else {
+            console.log("Invite signup failed");
+          }
+        } catch (error) {
+          console.error("Error during invite signup:", error);
+        }
+      }
+
     };
   
     return (
@@ -69,8 +119,8 @@ export default function InviteSignup () {
                 onChange={(e) => setEmail(e.target.value)}
                 className="mt-4 block w-full py-2 border-b-2 border-gray-300 focus:outline-none focus:border-blue-500 sm:text-sm text-black"
                 placeholder="Email"
-                required
               />
+              {emailError && <p className="text-red-500 text-xs">{emailError}</p>}
             </div>
             <div className="mb-4">
               <div className="relative">
@@ -80,8 +130,8 @@ export default function InviteSignup () {
                   onChange={(e) => setTempPassword(e.target.value)}
                   className="mt-4 block w-full py-2 border-b-2 border-gray-300 focus:outline-none focus:border-blue-500 sm:text-sm text-black"
                   placeholder="Password"
-                  required
                 />
+                {tempPasswordError && <p className="text-red-500 text-xs">{tempPasswordError}</p>}
                 <button
                   type="button"
                   className="absolute inset-y-0 right-0 px-3 flex items-center"
@@ -134,8 +184,8 @@ export default function InviteSignup () {
                   onChange={(e) => setNewPassword(e.target.value)}
                   className="mt-4 block w-full py-2 border-b-2 border-gray-300 focus:outline-none focus:border-blue-500 sm:text-sm text-black"
                   placeholder="New Password"
-                  required
                 />
+                {newPasswordError && <p className="text-red-500 text-xs">{newPasswordError}</p>}
                 <button
                   type="button"
                   className="absolute inset-y-0 right-0 px-3 flex items-center"
@@ -187,8 +237,8 @@ export default function InviteSignup () {
                 onChange={(e) => setFirstName(e.target.value)}
                 className="mt-4 block w-full py-2 border-b-2 border-gray-300 focus:outline-none focus:border-blue-500 sm:text-sm text-black"
                 placeholder="First Name"
-                required
               />
+              {firstNameError && <p className="text-red-500 text-xs">{firstNameError}</p>}
             </div>
             <div className="mb-4">
               <input
@@ -197,8 +247,8 @@ export default function InviteSignup () {
                 onChange={(e) => setLastName(e.target.value)}
                 className="mt-4 block w-full py-2 border-b-2 border-gray-300 focus:outline-none focus:border-blue-500 sm:text-sm text-black"
                 placeholder="Last Name"
-                required
               />
+              {lastNameError && <p className="text-red-500 text-xs">{lastNameError}</p>}
             </div>
             <div className="mb-4">
               <input
