@@ -67,7 +67,6 @@ const Sidebar = () => {
     return (
         isCollapsed ? null : (
             <div className="p-4 w-[241px] border-r-2 border-[#1e293b]">
-                <h1>FEED</h1>
                 <div className="flex justify-between">
                     <h1>PROJECTS</h1>
                     { loggedInUser?.role === "admin" ? 

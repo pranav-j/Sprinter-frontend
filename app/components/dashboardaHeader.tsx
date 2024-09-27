@@ -90,6 +90,12 @@ const DashboardHeader = () => {
                                 Members
                             </button>
                         )}
+                        <button 
+                            onClick={() => dispatch(setTab("Feed"))}
+                            className={`${selectedTab === "Feed" ? "border-b-2 border-black" : ""} px-2`}
+                        >
+                            Feed
+                        </button>
                     </ul>
                 </div>
             </div>

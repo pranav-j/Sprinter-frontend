@@ -9,13 +9,14 @@ import { Message, addNewMessage } from "@/redux/slices/chat/chatSlice";
 import Item from "./subComponents/item";
 import SprintCard from "./subComponents/sprint";
 import MemberCard from "./subComponents/memberCard";
+import Reports from "./subComponents/report";
+import Feed from "./subComponents/feed";
 import Chat from "./subComponents/chat";
 import DropArea from "./subComponents/dropArea";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { io } from 'socket.io-client';
 import { resetDeleteItemId } from "@/redux/slices/items/deleteItemIdSlice";
-import Reports from "./subComponents/report";
 
 const socket = io('http://localhost:3030', {
     withCredentials: true,
@@ -299,6 +300,14 @@ const TabDetails = () => {
         return(
             <div className="p-3 w-full h-full bg-[#d9d5d5] overflow-y-auto">
                 <Reports />
+            </div>
+        )
+    }
+
+    if(selectedTab === "Feed") {
+        return(
+            <div className="p-3 w-full h-full bg-[#d9d5d5] overflow-y-auto">
+                <Feed />
             </div>
         )
     }
