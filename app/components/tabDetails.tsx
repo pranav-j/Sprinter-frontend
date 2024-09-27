@@ -15,6 +15,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { io } from 'socket.io-client';
 import { resetDeleteItemId } from "@/redux/slices/items/deleteItemIdSlice";
+import Reports from "./subComponents/report";
 
 const socket = io('http://localhost:3030', {
     withCredentials: true,
@@ -288,7 +289,7 @@ const TabDetails = () => {
     if(selectedTab === "Reports") {
         return(
             <div className="p-3 w-full h-full bg-[#d9d5d5] overflow-y-auto">
-                REPORTS
+                <Reports />
             </div>
         )
     }
@@ -304,7 +305,7 @@ const TabDetails = () => {
     if(selectedTab === "Members") {
         return(
             <div className="flex flex-col p-3 w-full h-full bg-[#d9d5d5] overflow-y-auto">
-                <div className=" bg-white rounded mx-2 p-2">
+                <div className=" bg-white rounded mx-2 mb-2 p-2">
                     <h1>Add Members</h1>
                     {emails.map((email, index) => (
                         <div key={index} className="flex items-center gap-2 my-2">
@@ -325,7 +326,7 @@ const TabDetails = () => {
                         Send Invites
                     </button>
                 </div>
-                <h1>MEMBERS</h1>
+                <h1 className="text-xl font-bold px-3">MEMBERS</h1>
                 <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                     {members.map((member, index) => (
                         <MemberCard key={index} member={member} />
@@ -334,12 +335,6 @@ const TabDetails = () => {
             </div>
         )
     }
-
-    return(
-        <div className="w-full">
-
-        </div>
-    )
 };
 
 export default TabDetails;

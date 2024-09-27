@@ -656,6 +656,9 @@ video {
 .block {
   display: block;
 }
+.inline-block {
+  display: inline-block;
+}
 .flex {
   display: flex;
 }
@@ -665,6 +668,30 @@ video {
 .size-10 {
   width: 2.5rem;
   height: 2.5rem;
+}
+.size-8 {
+  width: 2rem;
+  height: 2rem;
+}
+.size-80 {
+  width: 20rem;
+  height: 20rem;
+}
+.size-0 {
+  width: 0px;
+  height: 0px;
+}
+.size-3 {
+  width: 0.75rem;
+  height: 0.75rem;
+}
+.size-1 {
+  width: 0.25rem;
+  height: 0.25rem;
+}
+.size-32 {
+  width: 8rem;
+  height: 8rem;
 }
 .h-10 {
   height: 2.5rem;
@@ -695,6 +722,9 @@ video {
 }
 .h-screen {
   height: 100vh;
+}
+.h-3 {
+  height: 0.75rem;
 }
 .max-h-\[300px\] {
   max-height: 300px;
@@ -750,8 +780,14 @@ video {
 .w-3\/4 {
   width: 75%;
 }
+.w-3 {
+  width: 0.75rem;
+}
 .min-w-\[200px\] {
   min-width: 200px;
+}
+.min-w-\[250px\] {
+  min-width: 250px;
 }
 .max-w-screen-md {
   max-width: 768px;
@@ -978,6 +1014,10 @@ video {
   padding-top: 0.75rem;
   padding-bottom: 0.75rem;
 }
+.px-1 {
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+}
 .pb-10 {
   padding-bottom: 2.5rem;
 }
@@ -999,8 +1039,14 @@ video {
 .pt-\[3px\] {
   padding-top: 3px;
 }
+.text-left {
+  text-align: left;
+}
 .text-center {
   text-align: center;
+}
+.text-right {
+  text-align: right;
 }
 .text-2xl {
   font-size: 1.5rem;

@@ -15,6 +15,12 @@ export interface Comment {
     commentedAt: string;
 };
 
+export interface ActivityLog {
+    changedBy: string;
+    change: string;
+    changedAt: string;
+};
+
 export interface Itemm {
     _id: string;
     projectId: string;
@@ -32,6 +38,7 @@ export interface Itemm {
     assignee?: string;
     attachments?: Attachment[];
     comments?: Comment[];
+    activityLog?: ActivityLog[];
 };
 
 interface ItemsSlice {
