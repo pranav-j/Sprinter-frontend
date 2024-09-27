@@ -35,6 +35,7 @@ const TabDetails = () => {
     const ongoingSprints = sprints.filter((sprint) => sprint.startedOn);
 
     const [emails, setEmails] = useState([""]);
+    const [reverseOrder, setReverseOrder] = useState<boolean>(false);
     const [selectedSprint, setSelectedSprint] = useState<string | null>(null);
 
     if(!selectedSprint && ongoingSprints.length > 0) {
@@ -170,7 +171,15 @@ const TabDetails = () => {
     }, [currentProjectId]);
 
     const itemz = useAppSelector((state) => state.itemsReducer.items);
-    const backlogItems = itemz.filter(item => !item.sprintId);
+    let backlogItems = itemz.filter(item => !item.sprintId);
+
+    if(reverseOrder) {
+        backlogItems = backlogItems.reverse();
+    }
+
+    const handleReverseOrder = () => {
+        setReverseOrder(!reverseOrder);
+    }
 
     if(selectedTab === "Backlogs") {
         return(
@@ -181,7 +190,7 @@ const TabDetails = () => {
                         <div className="flex gap-3">
                             <button onClick={() => dispatch(setIsNewTaskModalOpen())}>+</button>
                             <h1>🔍</h1>
-                            <h1>⬆️⬇️</h1>
+                            <button onClick={handleReverseOrder}>⬆️⬇️</button>
                         </div>
                     </div>
                     <div className="h-full overflow-y-auto pb-10 flex flex-col">
