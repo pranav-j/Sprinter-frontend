@@ -1,10 +1,12 @@
 "use client"
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { toggleSidebar } from "../../redux/slices/sidebarSlice";
 import { setTab } from "../../redux/slices/tabSlice";
+import { useRouter } from 'next/navigation'
 import Link from "next/link";
+import axios from "axios";
 
 const DashboardHeader = () => {
     const dispatch = useAppDispatch();
@@ -12,6 +14,7 @@ const DashboardHeader = () => {
     const selectedTab = useAppSelector((state) => state.tabReducer.selectedTab);
     const loggedInUser = useAppSelector((state) => state.userReducer.user);
     const currentItemId = useAppSelector((state) => state.ViewItemReducer.currentItemId);
+    const router = useRouter();
 
     useEffect(() => {
         console.log("isColllapsed",isCollapsed);
@@ -20,6 +23,25 @@ const DashboardHeader = () => {
         console.log("currentItemId........", currentItemId);
         
     }, [isCollapsed, selectedTab, currentItemId])
+
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+    const handleProfileClick = () => {
+        setIsDropdownOpen(!isDropdownOpen);
+    };
+
+    const handleLogout = async() => {
+        try {
+            console.log("Clicked LOGOUT");
+            
+            const response = await axios.post('http://localhost:3030/api/logout');
+            if (response.status === 200) {
+                router.push("/");
+            }
+        } catch (error) {
+            console.error("Logout failed", error);
+        }    
+    };
 
     return(
         <div className="flex justify-between h-14 border-b-2 border-[#1e293b]">
@@ -71,9 +93,26 @@ const DashboardHeader = () => {
                     </ul>
                 </div>
             </div>
-            <div className="right flex items-center">
+            {/* <div className="right flex items-center">
                 <img className="size-10 rounded-full border-2 border-[#d4d5d6]" src={loggedInUser?.profilePic || "https://robohash.org/111.235.68.162.png"} />
                 <h3 className="pr-8 pl-3">{loggedInUser?.firstName} {loggedInUser?.lastName}</h3>
+            </div> */}
+            <div className="right flex items-center relative">
+                <div className="flex items-center" onClick={handleProfileClick}>
+                    <img 
+                        className="size-10 rounded-full border-2 border-[#d4d5d6] cursor-pointer"
+                        src={loggedInUser?.profilePic || "https://robohash.org/111.235.68.162.png"} 
+                        
+                    />
+                    <h3 className="pr-8 pl-3">{loggedInUser?.firstName} {loggedInUser?.lastName}</h3>
+                </div>
+                {isDropdownOpen && (
+                    <div className="absolute top-full right-0 bg-white shadow-lg p-2 w-48 rounded-br-lg rounded-bl-lg">
+                        <button className="block px-4 py-2 text-black" onClick={handleLogout}>
+                            Logout
+                        </button>
+                    </div>
+                )}
             </div>
         </div>
     )
