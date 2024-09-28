@@ -14,6 +14,8 @@ const DashboardHeader = () => {
     const selectedTab = useAppSelector((state) => state.tabReducer.selectedTab);
     const loggedInUser = useAppSelector((state) => state.userReducer.user);
     const currentItemId = useAppSelector((state) => state.ViewItemReducer.currentItemId);
+    const currentProjectId = useAppSelector((state) => state.currentProjectIdReducer.currentProjectId);
+    const currentProject = useAppSelector((state) => state.projectsReducer.projects).find((project) => project._id === currentProjectId);
     const router = useRouter();
 
     useEffect(() => {
@@ -56,7 +58,7 @@ const DashboardHeader = () => {
                 </div>
 
                 <div className="flex flex-col pl-4 pt-[3px] border-l-2 h-full">
-                    <h3 className="font-bold">Sample Project</h3>
+                    <h3 className="font-bold">{currentProject?.title}</h3>
                     <ul className="flex gap-4">
                         <button 
                             onClick={() => dispatch(setTab("Backlogs"))}

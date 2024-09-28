@@ -7,11 +7,12 @@ import { fetchItems } from "@/redux/slices/items/itemsSlice";
 import { fetchSprints } from "@/redux/slices/sprints/sprintsSlice";
 import { Message, addNewMessage } from "@/redux/slices/chat/chatSlice";
 import Item from "./subComponents/item";
-import SprintCard from "./subComponents/sprint";
+import SprintCard from "./subComponents/sprintCard";
 import MemberCard from "./subComponents/memberCard";
 import Reports from "./subComponents/report";
 import Feed from "./subComponents/feed";
 import Chat from "./subComponents/chat";
+import Sprint from "./subComponents/sprint";
 import DropArea from "./subComponents/dropArea";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -33,15 +34,15 @@ const TabDetails = () => {
 
     const sprints = useAppSelector((state) => state.sprintsReducer.sprints);
     const unstartedSprints = sprints.filter((sprint) => !sprint.startedOn);
-    const ongoingSprints = sprints.filter((sprint) => sprint.startedOn);
+    // const ongoingSprints = sprints.filter((sprint) => sprint.startedOn);
 
     const [emails, setEmails] = useState([""]);
     const [reverseOrder, setReverseOrder] = useState<boolean>(false);
-    const [selectedSprint, setSelectedSprint] = useState<string | null>(null);
+    // const [selectedSprint, setSelectedSprint] = useState<string | null>(null);
 
-    if(!selectedSprint && ongoingSprints.length > 0) {
-        setSelectedSprint(ongoingSprints[0]._id);
-    };
+    // if(!selectedSprint && ongoingSprints.length > 0) {
+    //     setSelectedSprint(ongoingSprints[0]._id);
+    // };
 
     const handleEmailChange = (index: number, value: string) => {
       const newEmails = [...emails];
@@ -231,67 +232,74 @@ const TabDetails = () => {
 
     if(selectedTab === "Sprints") {
 
-        const handleSprintChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-            setSelectedSprint(event.target.value);
-        };
+        // const handleSprintChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        //     setSelectedSprint(event.target.value);
+        // };
 
-        const selectedSprintItems = itemz.filter((item) => item.sprintId === selectedSprint);
-        const todoItems = selectedSprintItems.filter((item) => item.status === "todo");
-        const onGoingItems = selectedSprintItems.filter((item) => item.status === "onGoing");
-        const doneItems = selectedSprintItems.filter((item) => item.status === "done");
+        // const selectedSprintItems = itemz.filter((item) => item.sprintId === selectedSprint);
+        // const todoItems = selectedSprintItems.filter((item) => item.status === "todo");
+        // const onGoingItems = selectedSprintItems.filter((item) => item.status === "onGoing");
+        // const doneItems = selectedSprintItems.filter((item) => item.status === "done");
         
-        const handleStatusChnage = async(statusId: 1 | 2 | 3) => {
-            try {
-                // const statusId = 1;
-                console.log("moved to todo");                
-                await axios.post(`http://localhost:3030/api/changeItemStatus`, {itemId: draggableitemId, statusId}, { withCredentials: true } )
-            } catch (error) {
-                console.error("Error in moving item:", error);
-            }
-        };
+        // const handleStatusChnage = async(statusId: 1 | 2 | 3) => {
+        //     try {
+        //         // const statusId = 1;
+        //         console.log("moved to todo");                
+        //         await axios.post(`http://localhost:3030/api/changeItemStatus`, {itemId: draggableitemId, statusId}, { withCredentials: true } )
+        //     } catch (error) {
+        //         console.error("Error in moving item:", error);
+        //     }
+        // };
+
+        // return(
+        //     <div className="flex flex-col p-3 w-full h-full bg-[#d9d5d5] overflow-y-auto">
+        //         <div className="w-full px-4 py-2">                    
+        //             <label htmlFor="options">Sprint</label>
+        //             <select id="options" name="options" onChange={handleSprintChange} value={selectedSprint || ''}>
+        //                 {ongoingSprints.map((sprint) => (
+        //                     <option value={sprint._id} key={sprint._id}>{sprint.sprintName}</option>
+        //                 ))}
+        //             </select>
+        //         </div>
+        //         <div className="flex h-full gap-3">
+        //             <div 
+        //                 className="w-1/3 h-full bg-[#ffffff] border-2 rounded overflow-y-auto"
+        //                 onDragOver={(e) => e.preventDefault()}
+        //                 onDrop={() => handleStatusChnage(1)}
+        //             >
+        //                 <h1 className="px-4 py-2 border-b-2">To do</h1>
+        //                 {todoItems.map((item, index) => (
+        //                     <Item key={index} item={item} />
+        //                 ))}
+        //             </div>
+        //             <div 
+        //                 className="w-1/3 h-full bg-[#ffffff] border-2 rounded overflow-y-auto"
+        //                 onDragOver={(e) => e.preventDefault()}
+        //                 onDrop={() => handleStatusChnage(2)}
+        //             >
+        //                 <h1 className="px-4 py-2 border-b-2">In progress</h1>
+        //                 {onGoingItems.map((item, index) => (
+        //                     <Item key={index} item={item} />
+        //                 ))}
+        //             </div>
+        //             <div 
+        //                 className="w-1/3 h-full bg-[#ffffff] border-2 rounded overflow-y-auto"
+        //                 onDragOver={(e) => e.preventDefault()}
+        //                 onDrop={() => handleStatusChnage(3)}
+        //             >
+        //                 <h1 className="px-4 py-2 border-b-2">Done</h1>
+        //                 {doneItems.map((item, index) => (
+        //                     <Item key={index} item={item} />
+        //                 ))}
+        //             </div>
+        //         </div>
+        //     </div>
+        // )
+
 
         return(
-            <div className="flex flex-col p-3 w-full h-full bg-[#d9d5d5] overflow-y-auto">
-                <div className="w-full px-4 py-2">                    
-                    <label htmlFor="options">Sprint</label>
-                    <select id="options" name="options" onChange={handleSprintChange} value={selectedSprint || ''}>
-                        {ongoingSprints.map((sprint) => (
-                            <option value={sprint._id} key={sprint._id}>{sprint.sprintName}</option>
-                        ))}
-                    </select>
-                </div>
-                <div className="flex h-full gap-3">
-                    <div 
-                        className="w-1/3 h-full bg-[#ffffff] border-2 rounded overflow-y-auto"
-                        onDragOver={(e) => e.preventDefault()}
-                        onDrop={() => handleStatusChnage(1)}
-                    >
-                        <h1 className="px-4 py-2 border-b-2">To do</h1>
-                        {todoItems.map((item, index) => (
-                            <Item key={index} item={item} />
-                        ))}
-                    </div>
-                    <div 
-                        className="w-1/3 h-full bg-[#ffffff] border-2 rounded overflow-y-auto"
-                        onDragOver={(e) => e.preventDefault()}
-                        onDrop={() => handleStatusChnage(2)}
-                    >
-                        <h1 className="px-4 py-2 border-b-2">In progress</h1>
-                        {onGoingItems.map((item, index) => (
-                            <Item key={index} item={item} />
-                        ))}
-                    </div>
-                    <div 
-                        className="w-1/3 h-full bg-[#ffffff] border-2 rounded overflow-y-auto"
-                        onDragOver={(e) => e.preventDefault()}
-                        onDrop={() => handleStatusChnage(3)}
-                    >
-                        <h1 className="px-4 py-2 border-b-2">Done</h1>
-                        {doneItems.map((item, index) => (
-                            <Item key={index} item={item} />
-                        ))}
-                    </div>
-                </div>
+            <div className="p-3 w-full h-full bg-[#d9d5d5] overflow-y-auto">
+                <Sprint />
             </div>
         )
     }

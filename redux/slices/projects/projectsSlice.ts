@@ -12,12 +12,12 @@ interface Project {
     updatedAt: string;
     startDate: string;
     endDate: string;
-}
+};
 
 interface ProjectsSlice {
     status: string;
     projects: Project[];
-}
+};
 
 const initialState: ProjectsSlice = {
     status: 'idle',
