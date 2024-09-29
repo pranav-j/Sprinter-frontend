@@ -1,5 +1,5 @@
-import { Sprint } from "@/redux/slices/sprints/sprintsSlice";
-import { useAppSelector } from "@/redux/hooks";
+import { Sprint, startSprint } from "@/redux/slices/sprints/sprintsSlice";
+import { useAppSelector, useAppDispatch } from "@/redux/hooks";
 import Item from "./item";
 import DropArea from "./dropArea";
 import axios from "axios";
@@ -15,23 +15,12 @@ const SprintCard = ({sprint}: SprintProp) => {
     const sprintItems = items.filter(item => item.sprintId === sprint._id);
     sprintItems.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
 
+    const dispatch = useAppDispatch();
+
     console.log("sprintItems...........", sprintItems);
     
     const handleStartSprint = async() => {
-        try {
-            const response = await axios.post("http://localhost:3030/api/startSprint", { sprintId: sprint._id }, { withCredentials: true });
-    
-            if (response.status === 200) {
-                // Handle successful response
-                alert("Sprint started");
-            } else {
-                // Handle errors
-                alert("Failed to start Sprint. Try again later.");
-            }
-        } catch (error) {
-          console.error("Error sending invites:", error);
-          alert("Error sending invites. Please try again.");
-        }
+        dispatch(startSprint(sprint._id));
     }
 
     return(
