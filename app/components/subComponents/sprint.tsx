@@ -1,8 +1,8 @@
-import { useAppSelector } from "@/redux/hooks";
+import { useAppSelector, useAppDispatch } from "@/redux/hooks";
 import axios from "axios";
 import { useState } from "react";
 import Item from "./item";
-
+import { changeItemStatus } from "@/redux/slices/items/itemsSlice";
 
 const Sprint = () => {
     const [selectedSprint, setSelectedSprint] = useState<string | null>(null);
@@ -10,6 +10,8 @@ const Sprint = () => {
     const sprints = useAppSelector((state) => state.sprintsReducer.sprints);
     const ongoingSprints = sprints.filter((sprint) => sprint.startedOn);
     const draggableitemId = useAppSelector((state) => state.draggableItemReducer.dreggedItemId);
+
+    const dispatch = useAppDispatch();
 
     if(!selectedSprint && ongoingSprints.length > 0) {
         setSelectedSprint(ongoingSprints[0]._id);
@@ -24,13 +26,16 @@ const Sprint = () => {
     const onGoingItems = selectedSprintItems.filter((item) => item.status === "onGoing");
     const doneItems = selectedSprintItems.filter((item) => item.status === "done");
     
-    const handleStatusChnage = async(statusId: 1 | 2 | 3) => {
-        try {
-            // const statusId = 1;
-            console.log("moved to todo");                
-            await axios.post(`http://localhost:3030/api/changeItemStatus`, {itemId: draggableitemId, statusId}, { withCredentials: true } )
-        } catch (error) {
-            console.error("Error in moving item:", error);
+    const handleStatusChange = async(statusId: 1 | 2 | 3) => {
+        // try {
+        //     // const statusId = 1;
+        //     console.log("moved to todo");                
+        //     await axios.post(`http://localhost:3030/api/changeItemStatus`, {itemId: draggableitemId, statusId}, { withCredentials: true } )
+        // } catch (error) {
+        //     console.error("Error in moving item:", error);
+        // }
+        if(draggableitemId) {
+            dispatch(changeItemStatus({itemId: draggableitemId, statusId}));
         }
     };
 
@@ -48,7 +53,7 @@ const Sprint = () => {
                 <div 
                     className="w-1/3 h-full bg-[#ffffff] border-2 rounded overflow-y-auto"
                     onDragOver={(e) => e.preventDefault()}
-                    onDrop={() => handleStatusChnage(1)}
+                    onDrop={() => handleStatusChange(1)}
                 >
                     <h1 className="px-4 py-2 border-b-2">To do</h1>
                     {todoItems.map((item, index) => (
@@ -58,7 +63,7 @@ const Sprint = () => {
                 <div 
                     className="w-1/3 h-full bg-[#ffffff] border-2 rounded overflow-y-auto"
                     onDragOver={(e) => e.preventDefault()}
-                    onDrop={() => handleStatusChnage(2)}
+                    onDrop={() => handleStatusChange(2)}
                 >
                     <h1 className="px-4 py-2 border-b-2">In progress</h1>
                     {onGoingItems.map((item, index) => (
@@ -68,7 +73,7 @@ const Sprint = () => {
                 <div 
                     className="w-1/3 h-full bg-[#ffffff] border-2 rounded overflow-y-auto"
                     onDragOver={(e) => e.preventDefault()}
-                    onDrop={() => handleStatusChnage(3)}
+                    onDrop={() => handleStatusChange(3)}
                 >
                     <h1 className="px-4 py-2 border-b-2">Done</h1>
                     {doneItems.map((item, index) => (

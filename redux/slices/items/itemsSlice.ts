@@ -45,24 +45,28 @@ interface ItemsSlice {
     fetchStatus: 'idle' | 'pending' | 'fulfilled' | 'rejected';
     updateItemStatus: 'idle' | 'pending' | 'fulfilled' | 'rejected';
     deleteItemStatus: 'idle' | 'pending' | 'fulfilled' | 'rejected';
+    changeItemStatusStatus : 'idle' | 'pending' | 'fulfilled' | 'rejected';
     items: Itemm[];
     errorFetchingItems: string | null;
     errorCreatingItem: string | null;
     errorUpdatingItem: string | null;
     errorDeletingItem: string | null;
     errorCommenting: string | null;
+    errorUpdatingItemStatus: string | null;
 };
 
 const initialState: ItemsSlice = {
     fetchStatus: 'idle',
     updateItemStatus: 'idle',
     deleteItemStatus: 'idle',
+    changeItemStatusStatus: 'idle',
     items: [],
     errorFetchingItems: null,
     errorCreatingItem: null,
     errorUpdatingItem: null,
     errorDeletingItem: null,
     errorCommenting: null,
+    errorUpdatingItemStatus: null,
 };
 
 export const fetchItems = createAsyncThunk<Itemm[], string>('items/fetchItems', async(currentProjectId: string) => {
@@ -103,6 +107,18 @@ export const updateItem = createAsyncThunk<Itemm, { itemId: string; updatedData:
           return response.data;
     }
 );
+
+export const changeItemStatus = createAsyncThunk(
+    'item/changeItemStatus',
+    async({itemId, statusId}: { itemId: string; statusId: number }) => {
+        const response = await axios.post(
+            `http://localhost:3030/api/changeItemStatus`,
+            {itemId, statusId},
+            { withCredentials: true }
+        );
+        return response.data;
+    }
+)
 
 export const addComment = createAsyncThunk(
     'items/addComment',
@@ -219,6 +235,20 @@ const itemsSlice = createSlice({
                         state.items[index].order = itemOrder.order;
                     }
                 });
+            })
+            .addCase(changeItemStatus.pending, (state) => {
+                state.changeItemStatusStatus = 'pending';
+            })
+            .addCase(changeItemStatus.fulfilled, (state, action) => {
+                const index = state.items.findIndex((item) => item._id === action.payload.updatedItem._id);
+                if(index !== -1) {
+                    state.items[index] = action.payload.updatedItem;
+                }
+                state.changeItemStatusStatus = 'fulfilled';
+            })
+            .addCase(changeItemStatus.rejected, (state, action) => {
+                state.changeItemStatusStatus = 'rejected';
+                state.errorUpdatingItemStatus = action.error.message || 'Failed to change item status';
             })
     },
 });
