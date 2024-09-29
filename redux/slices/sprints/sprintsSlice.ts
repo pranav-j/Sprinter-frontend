@@ -76,7 +76,7 @@ const sprintsSlice = createSlice({
                 }
                 state.startSprintsstatus = 'fulfilled';
             })
-            .addCase(startSprint.pending, (state) => {
+            .addCase(startSprint.rejected, (state) => {
                 state.startSprintsstatus = 'rejected';
             })
     }

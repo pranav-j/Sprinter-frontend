@@ -650,6 +650,12 @@ video {
 .mb-6 {
   margin-bottom: 1.5rem;
 }
+.mb-3 {
+  margin-bottom: 0.75rem;
+}
+.mt-1 {
+  margin-top: 0.25rem;
+}
 .line-clamp-1 {
   overflow: hidden;
   display: -webkit-box;
@@ -728,6 +734,9 @@ video {
 }
 .h-3 {
   height: 0.75rem;
+}
+.h-1 {
+  height: 0.25rem;
 }
 .max-h-\[300px\] {
   max-height: 300px;
@@ -1061,6 +1070,9 @@ video {
 }
 .pt-\[3px\] {
   padding-top: 3px;
+}
+.pr-4 {
+  padding-right: 1rem;
 }
 .text-left {
   text-align: left;
