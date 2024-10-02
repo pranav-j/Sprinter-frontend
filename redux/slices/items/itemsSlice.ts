@@ -45,6 +45,7 @@ interface ItemsSlice {
     fetchStatus: 'idle' | 'pending' | 'fulfilled' | 'rejected';
     updateItemStatus: 'idle' | 'pending' | 'fulfilled' | 'rejected';
     deleteItemStatus: 'idle' | 'pending' | 'fulfilled' | 'rejected';
+    moveItemStatus: 'idle' | 'pending' | 'fulfilled' | 'rejected';
     changeItemStatusStatus : 'idle' | 'pending' | 'fulfilled' | 'rejected';
     items: Itemm[];
     errorFetchingItems: string | null;
@@ -59,6 +60,7 @@ const initialState: ItemsSlice = {
     fetchStatus: 'idle',
     updateItemStatus: 'idle',
     deleteItemStatus: 'idle',
+    moveItemStatus: 'idle',
     changeItemStatusStatus: 'idle',
     items: [],
     errorFetchingItems: null,
@@ -224,6 +226,9 @@ const itemsSlice = createSlice({
                 state.deleteItemStatus = 'rejected';
                 state.errorDeletingItem = action.error.message || 'Failed to delete item';
             })
+            .addCase(moveItem.pending, (state) => {
+                state.moveItemStatus = 'pending';
+            })
             .addCase(moveItem.fulfilled, (state, action) => {
                 const index = state.items.findIndex(item => item._id === action.payload.updatedItem._id);
                 if(index !== -1) {
@@ -235,6 +240,14 @@ const itemsSlice = createSlice({
                         state.items[index].order = itemOrder.order;
                     }
                 });
+                state.moveItemStatus = 'fulfilled';
+
+                // setTimeout(() => {
+                //     state.moveItemStatus = 'idle';
+                // }, 1000);
+            })
+            .addCase(moveItem.rejected, (state) => {
+                state.moveItemStatus = 'rejected';
             })
             .addCase(changeItemStatus.pending, (state) => {
                 state.changeItemStatusStatus = 'pending';

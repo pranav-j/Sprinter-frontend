@@ -25,21 +25,13 @@ export default function Dashboard() {
     const members = useAppSelector((state) => state.MembersReducer.members);
     const loggedInUser = useAppSelector((state) => state.userReducer.user);
 
-    // const [members, setMembers] = useState<any>([]);
-
-    // useEffect(() => {
-    //     const getMembers = async() => {
-    //         const response = await axios.get(`http://localhost:3030/api/getMembers?projectId=${currentProjectId}`, { withCredentials: true })
-    //         setMembers(response);
-    //     }
-
-    //     getMembers();
-
-    //     console.log("members.......", members);
-        
-    // }, [currentProjectId])
+    const moveItemStatus = useAppSelector((state) => state.itemsReducer.moveItemStatus);
 
     const dispatch = useAppDispatch();
+
+    useEffect(() => {
+        console.log("moveItemStatus........", moveItemStatus);        
+    }, [moveItemStatus])
 
     useEffect(() => {
         dispatch(fetchMembers(currentProjectId));
@@ -85,6 +77,17 @@ export default function Dashboard() {
                 deleteItemId ? (
                     <div className="h-screen absolute bottom-0 left-0">
                         <DeleteItemModal />
+                    </div>
+                ) : null 
+            }
+            {
+                moveItemStatus === 'pending' ? (
+                    <div className="h-screen absolute bottom-0 left-0">
+                        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                            <div className="size-80 bg-white rounded-lg flex items-center justify-center">
+                                <h1>MOVING........</h1>
+                            </div>
+                        </div>
                     </div>
                 ) : null 
             }

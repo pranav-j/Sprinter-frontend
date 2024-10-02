@@ -42,8 +42,12 @@ const Sprint = () => {
         const daysPassed = today.diff(startedOn, "day");
         const progressPercentage = Math.min((daysPassed / durationInDays) * 100, 100);
         const remainingDays = Math.max(durationInDays - daysPassed, 0);
-        return { progressPercentage, daysPassed, remainingDays };
-    })() : { progressPercentage: 0, daysPassed: 0, remainingDays: 0 };
+        let missedBy = 0;
+        if(remainingDays === 0) {
+            missedBy = daysPassed - durationInDays;
+        }
+        return { progressPercentage, daysPassed, remainingDays, missedBy };
+    })() : { progressPercentage: 0, daysPassed: 0, remainingDays: 0, missedBy: 0 };
 
     useEffect(() => {
         console.log("SPRINT being viewed........", selectedSprintDetails);
@@ -64,19 +68,21 @@ const Sprint = () => {
                     <div className="mt-4">
                         <div className="w-full bg-gray-200 h-1 rounded">
                             <div
-                                className="h-1 bg-blue-500 rounded"
+                                className={`h-1 rounded ${sprintProgress.missedBy === 0 ? "bg-blue-500" : "bg-red-600"} `}
                                 style={{ width: `${sprintProgress.progressPercentage}%` }}
                             />
                         </div>
                         <div className="flex justify-between text-sm mt-1">
                             <span className="text-xs">{sprintProgress.daysPassed} days passed</span>
+                            {
+                                sprintProgress.missedBy !== 0 && <span className="text-xs text-red-600">Missed by {sprintProgress.missedBy} days </span>
+                            }
                             <span className="text-xs">{sprintProgress.remainingDays} days remaining</span>
                         </div>
                     </div>
                 )}
             </div>
 
-            {/* Rest of the component */}
             <div className="flex h-full gap-3">
                 <div
                     className="w-1/3 h-full bg-[#ffffff] border-2 rounded overflow-y-auto"
