@@ -4,27 +4,52 @@ import axios from "axios";
 interface User {
     _id: string;
     firstName: string;
-    lastName: string;
-    profilePic: string;
+    lastName?: string;
+    profilePic?: string;
     role: string;
 };
 
 interface UserState {
     status: 'idle' | 'pending' | 'fulfilled' | 'rejected';
     user: User | null;
-    error: string | null;
+    loginError: string | null;
+    userExistsError: string | null;
 };
 
 const initialState: UserState = {
     status: 'idle',
     user: null,
-    error: null
+    loginError: null,
+    userExistsError: null,
 };
 
 export const login = createAsyncThunk<User, { email: string, password: string }>('user/login', async({email, password}) => {
     const response = await axios.post("http://localhost:3030/api/login", { email, password }, {withCredentials: true});
     return response.data.user;
-})
+});
+
+export const OAuth = createAsyncThunk<User, any, { rejectValue: string }>(
+    'user/OAuth',
+    async (OAuthresponse, { rejectWithValue }) => {
+      try {
+        const response = await axios.post("http://localhost:3030/api/googleOAuth", OAuthresponse, { withCredentials: true });
+        
+        const { user, tokenn } = response.data;
+  
+        return user;
+      } catch (error: any) {
+        if (axios.isAxiosError(error) && error.response) {
+          if (error.response.status === 409) {
+            return rejectWithValue('User exists. Please sign in with email and password');
+          } else {
+            return rejectWithValue('Error from server: ' + error.response.data.message);
+          }
+        } else {
+          return rejectWithValue('Error sending token: ' + error.message);
+        }
+      }
+    }
+);  
 
 const userSlice = createSlice({
     name: 'user',
@@ -37,12 +62,31 @@ const userSlice = createSlice({
             })
             .addCase(login.fulfilled, (state, action) => {
                 state.status = 'fulfilled';
+                state.loginError = '';
                 state.user = action.payload;
             })
             .addCase(login.rejected, (state, action) => {
                 state.status = 'rejected';
-                state.error = action.error.message as string;
+                state.loginError = action.error.message as string;
             })
+
+            
+            .addCase(OAuth.pending, (state) => {
+                state.status = 'pending';
+                state.userExistsError = null;
+                state.loginError = null;
+              })
+              .addCase(OAuth.fulfilled, (state, action) => {
+                state.status = 'fulfilled';
+                state.userExistsError = null;
+                state.loginError = null;
+                state.user = action.payload;
+              })
+              .addCase(OAuth.rejected, (state, action) => {
+                state.status = 'rejected';
+                state.userExistsError = action.payload as string;
+                state.user = null;
+              });
     }
 })
 

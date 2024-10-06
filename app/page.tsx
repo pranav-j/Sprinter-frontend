@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import LandingHeader from "./components/landingHeader";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 export default function LandingPage() {
 

@@ -1,48 +1,76 @@
 "use client";
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from "react";
-import { login } from "@/redux/slices/userSlice";
+import { login, OAuth } from "@/redux/slices/userSlice";
+import Link from "next/link";
 
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { GoogleLogin } from '@react-oauth/google';
+import axios from 'axios';
 
 export default function Home() {
+  const router = useRouter();
+
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const router = useRouter();
+  const [showAdminLogin, setShowAdminLogin] = useState<boolean>(false);
+  const [userExists, setUserExists] = useState<string>("");
 
   const [emailError, setEmailError] = useState<string>("");
   const [passwordError, setPasswordError] = useState<string>("");
 
   const dispatch = useAppDispatch();
-  // const isLoggedIn = useAppSelector((state) => state.loggedInReducer.isLoggedIn);
+
+  // GOOGLE OAuth--------------------------------------------------
+
+  // const googleSignupResponse = async(response: any) => {
+  //   console.log("GOOGLE signin response.........", response);
+  //   try {
+  //     const res = await axios.post('http://localhost:3030/api/googleOAuth', response);
+
+  //     console.log("Response from backend:", res.data);
+  //   } catch (error) {
+  //     if (axios.isAxiosError(error) && error.response) {
+  //       // The request was made and the server responded with a status code
+  //       // that falls out of the range of 2xx
+  //       if (error.response.status === 409) {
+  //         setUserExists(error.response.data.message);
+  //       } else {
+  //         console.log("Error response from server:", error.response.data);
+  //       }
+  //     } else {
+  //       // Something happened in setting up the request that triggered an Error
+  //       console.log("Error sending token:", error);
+  //     }
+  //   }
+  // };
+
+  const { userExistsError } = useAppSelector(state => state.userReducer);
+
+  const handleGoogleSignupResponse = (response: any) => {
+  
+    console.log("GOOGLE signin response.........", response);
+  
+    dispatch(OAuth(response))
+      .unwrap()
+      .then((result) => {
+        console.log('OAuth Success:', result);
+        router.push("/dashBoard");
+      })
+      .catch((error) => {
+        console.log('OAuth Failed:', error);
+      });
+  };
+  // --------------------------------------------------------------
+
+  const loggedInUser = useAppSelector((state) => state.userReducer.user);
+  const loginError = useAppSelector((state) => state.userReducer.loginError);
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
-  // useEffect(() => {
-  //   console.log("isLoggedIn....", isLoggedIn);
-    
-  // }, [isLoggedIn]);
-
-  // const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
-  //       e.preventDefault();
-  //       try {
-  //           const response = await axios.post("http://localhost:3030/api/login", { email, password }, {withCredentials: true});
-  //           if (response.status === 200) {
-  //             // dispatch(setLoggedIn());
-  //             router.push("/dashBoard");
-  //           } else {
-  //             // handle error response
-  //             console.log("Login failed");
-  //           }
-  //         } catch (error) {
-  //           console.error("Error logging in:", error);
-  //         }  
-  //   };
-
-  const loggedInUser = useAppSelector((state) => state.userReducer.user);
 
   useEffect(() => {
     console.log("loggedInUser..............", loggedInUser);    
@@ -80,6 +108,9 @@ export default function Home() {
           router.push("/dashBoard");
         })
       } catch (error) {
+        // setLoginError('Email or password invalid.')
+        // console.log("LOGIN error", loginError);
+        
         console.error("Error logging in:", error);
       }
     }
@@ -89,14 +120,31 @@ export default function Home() {
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-300">
       <div className="sm:w-1/2 md:w-1/3 lg:w-1/4 bg-white shadow-lg rounded-xl p-8 pb-3 mt-8">
-        <h2 className="text-2xl font-bold mb-4 text-center text-black">
+        <h2 className="text-2xl font-bold text-center text-black">
           Welcome to
         </h2>
-        <div className="flex justify-center items-center bg-white rounded-lg p-2 mt-4">
+        <div className="flex justify-center items-center bg-white rounded-lg p-2 mb-4">
           <div className="bg-black rounded-md h-8 p-4 flex justify-center items-center">
             <span className="text-white text-lg font-bold  ">SPRINTER</span>
           </div>
         </div>
+        <div className='flex justify-between mt-2'>
+          <button 
+            onClick={() => setShowAdminLogin(false)} 
+            className={`px-4 py-2 rounded-full text-sm ${!showAdminLogin ? 'bg-black text-white' : 'bg-gray-200 text-gray-600'}`}>
+            Member Login
+          </button>
+          <button 
+            onClick={() => setShowAdminLogin(true)} 
+            className={`px-4 py-2 rounded-full text-sm ${showAdminLogin ? 'bg-black text-white' : 'bg-gray-200 text-gray-600'}`}>
+            Admin Login
+          </button>
+        </div>
+        <div className='flex justify-center items-center mt-2'>
+          {loginError && <p className="text-red-500 text-xs">Email or password invalid.</p>}
+          {userExistsError && <p className="text-red-500 text-xs">{userExistsError}</p>}
+        </div>
+
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
           <input
@@ -104,7 +152,7 @@ export default function Home() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               id="email"
-              className={`mt-4 block w-full py-2 border-b-2 focus:outline-none focus:border-blue-500 sm:text-sm text-black`}
+              className={`mt-2 block w-full py-2 border-b-2 focus:outline-none focus:border-blue-500 sm:text-sm text-black`}
               placeholder="Email"
             />
             {/* Display email error */}
@@ -176,22 +224,27 @@ export default function Home() {
           <div>
             <button
               type="submit"
-              className="mt-4 w-full bg-black  text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline mb-10  "
+              className="mt-4 w-full bg-black  text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline mb-3  "
             >
               LOGIN
             </button>
-            <p className="mt-4 text-center text-gray-600   text-xs">
-              Don't have an account?{" "}
-              <a
-                href="#"
-                className="font-bold text-blue-600 hover:underline   text-xs"
-              >
-                Sign Up
-              </a>
+            <p className="mt-1 text-center text-gray-600   text-xs">
+              Don't have an account?
+              <Link className="font-bold text-blue-600 hover:underline   text-xs" href={"/signup"}>Sign Up</Link>
             </p>
           </div>
         </form>
+
+        {showAdminLogin && 
+          <div className='flex flex-col justify-center items-center py-4'>
+            <strong className='pb-2'>OR</strong>
+            <GoogleLogin  onSuccess={handleGoogleSignupResponse} />
+          </div>
+        }
+
+
       </div>
+
     </div>
   );
 }

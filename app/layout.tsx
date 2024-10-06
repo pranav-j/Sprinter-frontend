@@ -5,6 +5,7 @@ import "./globals.css";
 // import { Provider } from "react-redux";
 // import { store } from "./redux/store";
 import ClientProvider from "./components/clientProvider";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,13 +20,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    
-      <html lang="en">
-        <body className={inter.className}>
-          <ClientProvider>{children}</ClientProvider>
-        </body>
-      </html>
-    
-
+      <GoogleOAuthProvider clientId="425719069655-aneq6sckal1sd764ousabd2v3o0k40oh.apps.googleusercontent.com">
+        <html lang="en">
+          <body className={inter.className}>
+            <ClientProvider>{children}</ClientProvider>
+          </body>
+        </html>
+      </GoogleOAuthProvider>
   );
 }

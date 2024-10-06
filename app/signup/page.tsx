@@ -1,7 +1,11 @@
 "use client";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { OAuth } from "@/redux/slices/userSlice";
+import { GoogleLogin, useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 import { useRouter } from 'next/navigation';
 import React, { useState } from "react";
+
 
 const Signup: React.FC = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -17,7 +21,26 @@ const Signup: React.FC = () => {
   const [lastNameError, setLastNameError] = useState<string>("");
   const [emailError, setEmailError] = useState<string>("");
   const [passwordError, setPasswordError] = useState<string>("");
+  const dispatch = useAppDispatch();
+  // GOOGLE OAuth--------------------------------------------------
 
+  const { userExistsError } = useAppSelector(state => state.userReducer);
+
+  const handleGoogleSignupResponse = (response: any) => {
+  
+    console.log("GOOGLE signin response.........", response);
+  
+    dispatch(OAuth(response))
+      .unwrap()
+      .then((result) => {
+        console.log('OAuth Success:', result);
+        router.push("/dashBoard");
+      })
+      .catch((error) => {
+        console.log('OAuth Failed:', error);
+      });
+  };
+  // --------------------------------------------------------------
 
   const router = useRouter();
 
@@ -116,6 +139,9 @@ const Signup: React.FC = () => {
             <span className="text-white text-lg font-bold">SPRINTER</span>
           </div>
         </div>
+        <div className='flex justify-center items-center mt-2'>
+          {userExistsError && <p className="text-red-500 text-xs">{userExistsError}</p>}
+        </div>
         {!otpSent ? (
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
@@ -212,7 +238,7 @@ const Signup: React.FC = () => {
             <div>
               <button
                 type="submit"
-                className="mt-4 w-full bg-black text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline mb-10"
+                className="mt-4 w-full bg-black text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline mb-1"
               >
                 SIGN UP
               </button>
@@ -240,6 +266,11 @@ const Signup: React.FC = () => {
             </div>
           </form>
         )}
+
+        <div className='flex flex-col justify-center items-center py-4 mb-2'>
+            <strong className='pb-2'>OR</strong>
+            <GoogleLogin  onSuccess={handleGoogleSignupResponse} />
+        </div>
       </div>
     </div>
   );
