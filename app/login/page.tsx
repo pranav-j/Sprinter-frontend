@@ -27,7 +27,7 @@ export default function Home() {
   // const googleSignupResponse = async(response: any) => {
   //   console.log("GOOGLE signin response.........", response);
   //   try {
-  //     const res = await axios.post('http://localhost:3030/api/googleOAuth', response);
+  //     const res = await axios.post('${process.env.NEXT_PUBLIC_BASE_URL}/api/googleOAuth', response);
 
   //     console.log("Response from backend:", res.data);
   //   } catch (error) {

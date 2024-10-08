@@ -19,7 +19,7 @@ import axios from "axios";
 import { io } from 'socket.io-client';
 import { resetDeleteItemId } from "@/redux/slices/items/deleteItemIdSlice";
 
-const socket = io('http://localhost:3030', {
+const socket = io(`${process.env.NEXT_PUBLIC_BASE_URL}`, {
     withCredentials: true,
 });
 
@@ -61,7 +61,7 @@ const TabDetails = () => {
 
     const handleSendInvites = async () => {
         try {
-            const response = await axios.post("http://localhost:3030/api/addMembers", { emails, currentProjectId }, { withCredentials: true });
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/addMembers`, { emails, currentProjectId }, { withCredentials: true });
     
             if (response.status === 200) {
                 // Handle successful response
@@ -105,36 +105,6 @@ const TabDetails = () => {
     // -------------------------------------------------------------------------------------------------
 
     // --------------------------------------------------
-    // const [itemz, setItemz] = useState([]);
-
-    // useEffect(() => {
-    //     const fetchItems = async() => {
-    //         try {
-    //             const response = await axios.get(`http://localhost:3030/api/items?projectId=${currentProjectId}`, { withCredentials: true });
-    //             setItemz(response.data);
-    //         } catch (error) {
-    //             console.log("Error fetching items:", error);
-    //         }
-    //     };
-    //     fetchItems();
-    // }, [currentProjectId]);
-
-    // --------------------------------------------------
-
-    
-    // const [ sprints, setSprints ] = useState([]);
-
-    // useEffect(() => {
-    //     const fetchItems = async() => {
-    //         try {
-    //             const response = await axios.get(`http://localhost:3030/api/sprints?projectId=${currentProjectId}`, { withCredentials: true });
-    //             setSprints(response.data);
-    //         } catch (error) {
-    //             console.log("Error fetching items:", error);
-    //         }
-    //     };
-    //     fetchItems();
-    // }, [currentProjectId]);
 
     // useEffect(() => {
     //     console.log('Sprints........', sprints);        
@@ -196,14 +166,23 @@ const TabDetails = () => {
                         </div>
                     </div>
                     <div className="h-full overflow-y-auto pb-10 flex flex-col">
-                        <DropArea index={0} moveItemToBacklog/>
-                        {backlogItems.map((item, index) => (
+                        <DropArea index={0} moveItemToBacklog />
+
+                        {backlogItems.length === 0 ? (
+                            <div className="flex flex-col items-center justify-center h-full text-center">
+                                <p className="text-lg font-semibold">No tasks in the backlog!</p>
+                                <p className="text-sm text-gray-500">Add some tasks to get started.</p>
+                            </div>
+                        ) : (
+                            backlogItems.map((item, index) => (
                             <div key={index}>
                                 <Item key={index} item={item} />
-                                <DropArea key={`drop-${index}`} index={index + 1} moveItemToBacklog/>
+                                <DropArea key={`drop-${index}`} index={index + 1} moveItemToBacklog />
                             </div>
-                        ))}
+                            ))
+                        )}
                     </div>
+
                 </div>
     
                 <div className="w-1/2  rounded flex flex-col gap-3">
@@ -219,10 +198,14 @@ const TabDetails = () => {
                         </div>
                     </div>
                     <div className="flex flex-col gap-1 h-full overflow-y-auto rounded">
-                        {
-                            unstartedSprints.map((sprint, index) => (
+                        {unstartedSprints.length === 0 ? (
+                            <div className="flex flex-col items-center justify-center h-full text-center">
+                                <p className="text-lg font-semibold">No sprints yet!</p>
+                                <p className="text-sm text-gray-500">Create one to get started.</p>
+                            </div>) : 
+                            (unstartedSprints.map((sprint, index) => (
                                 <SprintCard key={index} sprint={sprint} />
-                            ))
+                            )))
                         }
                     </div>
                 </div>
@@ -245,7 +228,7 @@ const TabDetails = () => {
         //     try {
         //         // const statusId = 1;
         //         console.log("moved to todo");                
-        //         await axios.post(`http://localhost:3030/api/changeItemStatus`, {itemId: draggableitemId, statusId}, { withCredentials: true } )
+        //         await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/changeItemStatus`, {itemId: draggableitemId, statusId}, { withCredentials: true } )
         //     } catch (error) {
         //         console.error("Error in moving item:", error);
         //     }

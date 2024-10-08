@@ -24,7 +24,7 @@ const initialState: UserState = {
 };
 
 export const login = createAsyncThunk<User, { email: string, password: string }>('user/login', async({email, password}) => {
-    const response = await axios.post("http://localhost:3030/api/login", { email, password }, {withCredentials: true});
+    const response = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/login`, { email, password }, {withCredentials: true});
     return response.data.user;
 });
 
@@ -32,7 +32,7 @@ export const OAuth = createAsyncThunk<User, any, { rejectValue: string }>(
     'user/OAuth',
     async (OAuthresponse, { rejectWithValue }) => {
       try {
-        const response = await axios.post("http://localhost:3030/api/googleOAuth", OAuthresponse, { withCredentials: true });
+        const response = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/googleOAuth`, OAuthresponse, { withCredentials: true });
         
         const { user, tokenn } = response.data;
   
@@ -70,7 +70,7 @@ const userSlice = createSlice({
                 state.loginError = action.error.message as string;
             })
 
-            
+
             .addCase(OAuth.pending, (state) => {
                 state.status = 'pending';
                 state.userExistsError = null;
@@ -84,7 +84,7 @@ const userSlice = createSlice({
               })
               .addCase(OAuth.rejected, (state, action) => {
                 state.status = 'rejected';
-                state.userExistsError = action.payload as string;
+                state.userExistsError = action.error.message as string;
                 state.user = null;
               });
     }

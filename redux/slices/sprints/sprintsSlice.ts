@@ -28,20 +28,20 @@ const initialState: SprintsSlice = {
 }
 
 export const fetchSprints = createAsyncThunk<Sprint[], string>('sprints/fetchSprints', async(currentProjectId: string) => {
-    const response = await axios.get(`http://localhost:3030/api/sprints?projectId=${currentProjectId}`, { withCredentials: true });
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/sprints?projectId=${currentProjectId}`, { withCredentials: true });
     // console.log('Sprints........', response.data.sprints);    
     return response.data.sprints;
 });
 
 export const createSprint = createAsyncThunk<Sprint, Omit<Sprint, '_id' | 'createdAt' | 'updatedAt' | 'createdBy' | 'startedOn' >>('sprints/createSprint', async(newSprint) => {
-    const response = await axios.post("http://localhost:3030/api/sprint", newSprint, { withCredentials: true })
+    const response = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/sprint`, newSprint, { withCredentials: true })
     return response.data;
 });
 
 export const startSprint = createAsyncThunk(
     'sprints/startSprint',
     async(sprintId: string) => {
-        const response = await axios.post("http://localhost:3030/api/startSprint", { sprintId }, { withCredentials: true });
+        const response = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/startSprint`, { sprintId }, { withCredentials: true });
         return response.data;
     }
 );

@@ -29,7 +29,7 @@ const NewTaskModal = () => {
     // const handleSubmit = async (e: React.FormEvent) => {
     //     e.preventDefault();
     //     try {
-    //         const response = await axios.post("http://localhost:3030/api/item", 
+    //         const response = await axios.post("${process.env.NEXT_PUBLIC_BASE_URL}/api/item", 
     //             { projectId: currentProjectId, title, description, type, start, end, assignee }, 
     //             { withCredentials: true }
     //         );

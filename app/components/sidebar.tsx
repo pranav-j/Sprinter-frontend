@@ -26,7 +26,7 @@ const Sidebar = () => {
     // useEffect(() => {
     //     const fetchProjects = async() => {
     //         try {
-    //             const response = await axios.get("http://localhost:3030/api/post", { withCredentials: true });
+    //             const response = await axios.get("${process.env.NEXT_PUBLIC_BASE_URL}/api/post", { withCredentials: true });
     //             setProjects(response.data.projects);
     //         } catch (error) {
     //             console.log("Error fetching projects:", error);
@@ -74,7 +74,13 @@ const Sidebar = () => {
                         : null 
                     }
                 </div>
-                <div className="pl-2">
+                {projects.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center h-full text-center">
+                        <p className="text-lg font-semibold">No projects yet!</p>
+                        <p className="text-sm text-gray-500">Create one to get started.</p>
+                    </div> 
+                ) : (
+                    <div className="pl-2">
                     {
                         projects.map((project: Project) => (
                             <h3 
@@ -84,7 +90,8 @@ const Sidebar = () => {
                             >{project.title}</h3>
                         ))
                     }
-                </div>           
+                </div>
+                )}
             </div>
         )
     );

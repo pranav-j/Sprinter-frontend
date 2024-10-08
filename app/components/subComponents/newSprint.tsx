@@ -32,7 +32,7 @@ const NewSprintModal = () => {
     // const handleSubmit = async (e: React.FormEvent) => {
     //     e.preventDefault();
     //     try {
-    //         const response = await axios.post("http://localhost:3030/api/sprint", 
+    //         const response = await axios.post("${process.env.NEXT_PUBLIC_BASE_URL}/api/sprint", 
     //             { sprintName, description, durationInWeeks, projectId: currentProjectId }, 
     //             { withCredentials: true }
     //         );
@@ -59,12 +59,7 @@ const NewSprintModal = () => {
 
         if(isValid) {
             try {
-                // const response = await axios.post("http://localhost:3030/api/sprint", 
-                //     { sprintName, description, durationInWeeks, projectId: currentProjectId }, 
-                //     { withCredentials: true }
-                // );
                 await dispatch(createSprint({sprintName, description, durationInWeeks, projectId: currentProjectId}));
-                // await dispatch(createSprint({ sprintName, description, durationinweeksInWeeks: durationinweeks }));
                 dispatch(setIsNewSprintModalOpen());
                 setFailedSprintCreation(false);
             } catch (error) {
@@ -113,6 +108,7 @@ const NewSprintModal = () => {
                             value={durationInWeeks}
                             onChange={(e) => setDurationInWeeks(Number(e.target.value))}
                             min="1"
+                            max="4"
                             className="w-full px-3 py-2 border rounded-lg"
                         />
                     </div>

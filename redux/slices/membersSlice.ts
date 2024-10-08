@@ -30,7 +30,7 @@ export const fetchMembers = createAsyncThunk<Member[], string>(
   'members/fetchMembers',
   async (projectId: string, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`http://localhost:3030/api/getMembers?projectId=${projectId}`, { withCredentials: true });
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/getMembers?projectId=${projectId}`, { withCredentials: true });
       return response.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Failed to fetch members');

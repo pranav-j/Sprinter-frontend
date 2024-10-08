@@ -72,20 +72,15 @@ const initialState: ItemsSlice = {
 };
 
 export const fetchItems = createAsyncThunk<Itemm[], string>('items/fetchItems', async(currentProjectId: string) => {
-    const response =  await axios.get(`http://localhost:3030/api/items?projectId=${currentProjectId}`, { withCredentials: true });
+    const response =  await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/items?projectId=${currentProjectId}`, { withCredentials: true });
     return response.data.items;
 });
-
-// export const createItem = createAsyncThunk<Itemm, Omit<Itemm, '_id' | 'createdAt' | 'updatedAt' | 'sprintId' | 'status' | 'order' >>('items/createItem', async(newItem) => {
-//     const response = await axios.post("http://localhost:3030/api/item", newItem, { withCredentials: true });
-//     return response.data;
-// });
 
 export const createItem = createAsyncThunk<Itemm, FormData>(
     'items/createItem',
     async (formData) => {
       const response = await axios.post(
-        'http://localhost:3030/api/item',
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/item`,
         formData,
         {
           headers: {
@@ -102,7 +97,7 @@ export const updateItem = createAsyncThunk<Itemm, { itemId: string; updatedData:
     'items/updateItem',
     async({itemId, updatedData}) => {
         const response = await axios.put(
-            `http://localhost:3030/api/item/${itemId}`,
+            `${process.env.NEXT_PUBLIC_BASE_URL}/api/item/${itemId}`,
             updatedData,
             { withCredentials: true }
           );
@@ -114,7 +109,7 @@ export const changeItemStatus = createAsyncThunk(
     'item/changeItemStatus',
     async({itemId, statusId}: { itemId: string; statusId: number }) => {
         const response = await axios.post(
-            `http://localhost:3030/api/changeItemStatus`,
+            `${process.env.NEXT_PUBLIC_BASE_URL}/api/changeItemStatus`,
             {itemId, statusId},
             { withCredentials: true }
         );
@@ -126,8 +121,8 @@ export const addComment = createAsyncThunk(
     'items/addComment',
     async({ itemId, comment }: { itemId: string, comment: string }) => {
         const response = await axios.post(
-            `http://localhost:3030/api/comment/${itemId}`,
-            { comment },
+            `${process.env.NEXT_PUBLIC_BASE_URL}/api/comment`,
+            { comment, itemId },
             { withCredentials: true }
         );
         return response.data;
@@ -137,7 +132,7 @@ export const addComment = createAsyncThunk(
 export const deleteItem = createAsyncThunk<string, string>(
     'items/deleteItem',
     async(itemId: string) => {
-        await axios.delete(`http://localhost:3030/api/item/${itemId}`, { withCredentials: true });
+        await axios.delete(`${process.env.NEXT_PUBLIC_BASE_URL}/api/item/${itemId}`, { withCredentials: true });
         return itemId;
     }
 );
@@ -153,7 +148,7 @@ export const moveItem = createAsyncThunk(
       currentProjectId?: string,
     }) => {
       const response = await axios.post(
-        "http://localhost:3030/api/moveItem",
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/moveItem`,
         {
           insertAt,
           itemId: draggableItemId,

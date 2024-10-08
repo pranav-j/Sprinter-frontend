@@ -25,7 +25,7 @@ const NewProjectModal = () => {
     // const handleSubmit = async(e: React.FormEvent) => {
     //     e.preventDefault();
     //     try {
-    //         const response = await axios.post("http://localhost:3030/api/post", 
+    //         const response = await axios.post("${process.env.NEXT_PUBLIC_BASE_URL}/api/post", 
     //             { title, description }, 
     //             { withCredentials: true }
     //         );

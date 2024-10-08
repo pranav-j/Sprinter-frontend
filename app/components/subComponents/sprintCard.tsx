@@ -33,15 +33,20 @@ const SprintCard = ({sprint}: SprintProp) => {
                 }
                 
             </div>
-            <div className="bg-[#ffffff]">
+            <div className="bg-[#ffffff] h-full">
                 <DropArea index={0} moveToSprintId={sprint._id} />
-                {
-                    sprintItems.map((item, index) => (
+                {sprintItems.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center text-center h-32">
+                        <p className="text-lg font-semibold">No sprints yet!</p>
+                        <p className="text-sm text-gray-500">Create one to get started.</p>
+                    </div>
+                ) : 
+                    (sprintItems.map((item, index) => (
                         <div key={index}>
                             <Item key={index} item={item} />
                             <DropArea key={`drop-${index}`} index={index + 1} moveToSprintId={sprint._id} />
                         </div>
-                    ))
+                    )))
                 }
             </div>
         </div>

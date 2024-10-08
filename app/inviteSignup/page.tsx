@@ -87,7 +87,7 @@ export default function InviteSignup () {
             formData.append("profilePic", image);
           }
     
-          const response = await axios.post("http://localhost:3030/api/inviteSignup", formData);
+          const response = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/inviteSignup`, formData);
           if (response.status === 200) {
             router.push("/login");
           } else {

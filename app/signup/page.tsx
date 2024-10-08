@@ -101,7 +101,7 @@ const Signup: React.FC = () => {
           formData.append("profilePic", image);
         }
   
-        const response = await axios.post("http://localhost:3030/api/signup", formData);
+        const response = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/signup`, formData);
         if (response.status === 200) {
           setOtpSent(true);
         } else {
@@ -117,7 +117,7 @@ const Signup: React.FC = () => {
   const handleOtpSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:3030/api/verifyOTP", { email, otp });
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/verifyOTP`, { email, otp });
       if (response.status === 200) {
         router.push("/login");
       } else {

@@ -9,7 +9,7 @@ interface ChatProps {
     socket: Socket;
 }
 
-// const socket = io('http://localhost:3030', {
+// const socket = io('${process.env.NEXT_PUBLIC_BASE_URL}', {
 //     withCredentials: true,
 // });
 

@@ -25,12 +25,12 @@ const initialState: ProjectsSlice = {
 };
 
 export const fetchProjects = createAsyncThunk('projects/fetchProjects', async() => {
-    const response = await axios.get("http://localhost:3030/api/project", { withCredentials: true });
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/project`, { withCredentials: true });
     return response.data.projects;
 });
 
 export const createProject = createAsyncThunk('projects/create', async(project: { title: string, description: string, startDate: string, endDate: string }) => {
-    const response = await axios.post("http://localhost:3030/api/project", project, { withCredentials: true })
+    const response = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/project`, project, { withCredentials: true })
     console.log("response.data.......", response.data);    
     return response.data
 })

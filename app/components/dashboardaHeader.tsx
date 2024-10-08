@@ -36,7 +36,7 @@ const DashboardHeader = () => {
         try {
             console.log("Clicked LOGOUT");
             
-            const response = await axios.post('http://localhost:3030/api/logout');
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/logout`);
             if (response.status === 200) {
                 router.push("/");
             }
