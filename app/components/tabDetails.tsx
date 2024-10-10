@@ -6,7 +6,9 @@ import { setIsNewSprintModalOpen } from "@/redux/slices/sprints/newSprintModalSl
 import { fetchItems } from "@/redux/slices/items/itemsSlice";
 import { fetchSprints } from "@/redux/slices/sprints/sprintsSlice";
 import { Message, addNewMessage } from "@/redux/slices/chat/chatSlice";
-import Item from "./subComponents/item";
+import { MdAdd } from "react-icons/md";
+import { BiSortAlt2 } from "react-icons/bi";
+import { FiSearch } from "react-icons/fi";import Item from "./subComponents/item";
 import SprintCard from "./subComponents/sprintCard";
 import MemberCard from "./subComponents/memberCard";
 import Reports from "./subComponents/report";
@@ -158,11 +160,11 @@ const TabDetails = () => {
             <div className="flex gap-3 p-3 w-full h-full bg-[#d9d5d5]">
                 <div className="w-1/2 overflow-hidden h-full border-2 rounded mb-2 bg-[#ffffff]">
                     <div className="flex justify-between px-4 py-2 h-10 border-b-2">
-                        <h1>Backlog</h1>
+                        <h1 className="font-bold">Backlog</h1>
                         <div className="flex gap-3">
-                            <button onClick={() => dispatch(setIsNewTaskModalOpen())}>+</button>
-                            <h1>🔍</h1>
-                            <button onClick={handleReverseOrder}>⬆️⬇️</button>
+                            <button onClick={() => dispatch(setIsNewTaskModalOpen())}><MdAdd /></button>
+                            <button><FiSearch /></button>
+                            <button onClick={handleReverseOrder}><BiSortAlt2 /></button>
                         </div>
                     </div>
                     <div className="h-full overflow-y-auto pb-10 flex flex-col">
@@ -187,14 +189,14 @@ const TabDetails = () => {
     
                 <div className="w-1/2  rounded flex flex-col gap-3">
                     <div className="flex justify-between px-4 py-2 h-10 rounded bg-[#ffffff]">
-                        <h1>Sprints</h1>
+                        <h1 className="font-bold">Sprints</h1>
                         <div className="flex gap-3">
                             { loggedInUser?.role === "admin" ? 
-                                <button onClick={() => dispatch(setIsNewSprintModalOpen())}>+</button> :
+                                <button onClick={() => dispatch(setIsNewSprintModalOpen())}><MdAdd /></button> :
                                 null
                             }
                             
-                            <h1>🔍</h1>
+                            <button><FiSearch /></button>
                         </div>
                     </div>
                     <div className="flex flex-col gap-1 h-full overflow-y-auto rounded">
@@ -214,72 +216,6 @@ const TabDetails = () => {
     }
 
     if(selectedTab === "Sprints") {
-
-        // const handleSprintChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        //     setSelectedSprint(event.target.value);
-        // };
-
-        // const selectedSprintItems = itemz.filter((item) => item.sprintId === selectedSprint);
-        // const todoItems = selectedSprintItems.filter((item) => item.status === "todo");
-        // const onGoingItems = selectedSprintItems.filter((item) => item.status === "onGoing");
-        // const doneItems = selectedSprintItems.filter((item) => item.status === "done");
-        
-        // const handleStatusChnage = async(statusId: 1 | 2 | 3) => {
-        //     try {
-        //         // const statusId = 1;
-        //         console.log("moved to todo");                
-        //         await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/changeItemStatus`, {itemId: draggableitemId, statusId}, { withCredentials: true } )
-        //     } catch (error) {
-        //         console.error("Error in moving item:", error);
-        //     }
-        // };
-
-        // return(
-        //     <div className="flex flex-col p-3 w-full h-full bg-[#d9d5d5] overflow-y-auto">
-        //         <div className="w-full px-4 py-2">                    
-        //             <label htmlFor="options">Sprint</label>
-        //             <select id="options" name="options" onChange={handleSprintChange} value={selectedSprint || ''}>
-        //                 {ongoingSprints.map((sprint) => (
-        //                     <option value={sprint._id} key={sprint._id}>{sprint.sprintName}</option>
-        //                 ))}
-        //             </select>
-        //         </div>
-        //         <div className="flex h-full gap-3">
-        //             <div 
-        //                 className="w-1/3 h-full bg-[#ffffff] border-2 rounded overflow-y-auto"
-        //                 onDragOver={(e) => e.preventDefault()}
-        //                 onDrop={() => handleStatusChnage(1)}
-        //             >
-        //                 <h1 className="px-4 py-2 border-b-2">To do</h1>
-        //                 {todoItems.map((item, index) => (
-        //                     <Item key={index} item={item} />
-        //                 ))}
-        //             </div>
-        //             <div 
-        //                 className="w-1/3 h-full bg-[#ffffff] border-2 rounded overflow-y-auto"
-        //                 onDragOver={(e) => e.preventDefault()}
-        //                 onDrop={() => handleStatusChnage(2)}
-        //             >
-        //                 <h1 className="px-4 py-2 border-b-2">In progress</h1>
-        //                 {onGoingItems.map((item, index) => (
-        //                     <Item key={index} item={item} />
-        //                 ))}
-        //             </div>
-        //             <div 
-        //                 className="w-1/3 h-full bg-[#ffffff] border-2 rounded overflow-y-auto"
-        //                 onDragOver={(e) => e.preventDefault()}
-        //                 onDrop={() => handleStatusChnage(3)}
-        //             >
-        //                 <h1 className="px-4 py-2 border-b-2">Done</h1>
-        //                 {doneItems.map((item, index) => (
-        //                     <Item key={index} item={item} />
-        //                 ))}
-        //             </div>
-        //         </div>
-        //     </div>
-        // )
-
-
         return(
             <div className="p-3 w-full h-full bg-[#d9d5d5] overflow-y-auto">
                 <Sprint />

@@ -26,12 +26,11 @@ const SprintCard = ({sprint}: SprintProp) => {
     return(
         <div className="border-2 flex flex-col w-full border-b-2 rounded">
             <div className="flex justify-between items-center border-b-2 py-3">
-                <h1 className="text-lg font-bold px-4">{sprint.sprintName}</h1>
+                <h1 className="font-bold px-4">{sprint.sprintName}</h1>
                 { loggedInUser?.role === "admin" ? 
                     <button onClick={handleStartSprint} className="px-4">START</button> :
                     null
-                }
-                
+                }               
             </div>
             <div className="bg-[#ffffff] h-full">
                 <DropArea index={0} moveToSprintId={sprint._id} />

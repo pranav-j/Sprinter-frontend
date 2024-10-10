@@ -4,6 +4,10 @@ import { setDraggableItemId, setDraggableItemIdNull } from "@/redux/slices/drag/
 import { setDraggableItemSprintId, setDraggableItemSprintIdNull } from "@/redux/slices/drag/draggedItemSprintId";
 import { setCurrentItemId } from "@/redux/slices/items/viewItemModal";
 import { setDeleteItemId } from "@/redux/slices/items/deleteItemIdSlice";
+import { TiDocumentText } from "react-icons/ti";
+import { IoCheckmarkDoneCircleOutline } from "react-icons/io5";
+import { CgDebug } from "react-icons/cg";
+import { FaRegComment } from "react-icons/fa6";
 
 interface ItemProp {
     item: Itemm
@@ -51,7 +55,12 @@ const Item = ({item}: ItemProp) => {
             onDragEnd={handleOnDragEnd}
             >
             <div className="w-11 flex ">
-                <h1>📜</h1>
+                {
+                    item.type === 'task' ? <IoCheckmarkDoneCircleOutline /> :
+                    item.type === 'bug' ? <CgDebug /> :
+                    item.type === 'story' ? <TiDocumentText /> : null
+                }
+                
             </div>
             
             <div className="w-full cursor-pointer">
@@ -87,7 +96,10 @@ const Item = ({item}: ItemProp) => {
                 <div className="flex justify-between">
                     <h3  onClick={() => dispatch(setCurrentItemId(item._id))}>Status: {item.status}</h3>
                     {item.comments && 
-                        <h3>🗨️{item.comments.length}</h3>
+                        <div className="flex items-center space-x-2">
+                            <FaRegComment />
+                            <p>{item.comments.length}</p>
+                        </div>
                     }
                 </div>
             </div>

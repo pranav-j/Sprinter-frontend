@@ -31,12 +31,12 @@ export default function Dashboard() {
 
     useEffect(() => {
         console.log("moveItemStatus........", moveItemStatus);        
-    }, [moveItemStatus])
+    }, [moveItemStatus]);
 
     useEffect(() => {
         dispatch(fetchMembers(currentProjectId));
         console.log("members.......", members);
-    }, [currentProjectId])
+    }, [currentProjectId]);
 
     return(
         <div className="h-screen ststic">

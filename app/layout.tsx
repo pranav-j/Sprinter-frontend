@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Lato } from "next/font/google";
 import "./globals.css";
 
 // import { Provider } from "react-redux";
@@ -7,7 +7,12 @@ import "./globals.css";
 import ClientProvider from "./components/clientProvider";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
-const inter = Inter({ subsets: ["latin"] });
+// const inter = Inter({ subsets: ["latin"] });
+const lato = Lato({
+  subsets: ["latin"],
+  weight: ["100", "300", "400", "700", "900"],
+});
+
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -22,7 +27,7 @@ export default function RootLayout({
   return (
       <GoogleOAuthProvider clientId="425719069655-aneq6sckal1sd764ousabd2v3o0k40oh.apps.googleusercontent.com">
         <html lang="en">
-          <body className={inter.className}>
+          <body className={lato.className}>
             <ClientProvider>{children}</ClientProvider>
           </body>
         </html>

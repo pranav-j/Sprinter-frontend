@@ -80,9 +80,9 @@ const Chat = ({ socket }: ChatProps) => {
     };
 
     return (
-        <div className="flex h-full">
+        <div className="flex h-full rounded-lg">
             {/* Sidebar for members and group */}
-            <div className="w-1/4 bg-gray-200 p-4 overflow-auto">
+            <div className="w-1/4 bg-gray-200 p-4 overflow-auto rounded-l-lg">
                 <h1>PROJECTS</h1>
                 <div key={currentProject?._id} onClick={() => setMessageTo(currentProject?._id || '')} className={`flex items-center p-2 cursor-pointer ${messageTo === currentProject?._id && 'bg-green-300 rounded'}`}>
                     <img className="w-10 h-10 rounded-full" src={"https://robohash.org/111.235.68.162.png"} alt={currentProject?.title} />
@@ -98,7 +98,7 @@ const Chat = ({ socket }: ChatProps) => {
             </div>
 
             {/* Chat Area */}
-            <div className="w-3/4 bg-white p-4 flex flex-col justify-between">
+            <div className="w-3/4 bg-white p-4 flex flex-col justify-between rounded-r-lg">
                 {/* Chat Messages */}
                 <div className="flex-1 overflow-y-auto p-2 bg-gray-50">
                     {/* Chat bubbles */}

@@ -23,3 +23,9 @@
     -ms-overflow-style: none;  /* IE and Edge */
   }
 }
+
+@layer components {
+  .btn {
+    background-color: rgb(127, 255, 127);
+  }
+}
