@@ -229,7 +229,7 @@ export default function Home() {
               LOGIN
             </button>
             <p className="mt-1 text-center text-gray-600   text-xs">
-              Don't have an account?
+              Don&apos;t have an account?
               <Link className="font-bold text-blue-600 hover:underline   text-xs" href={"/signup"}>Sign Up</Link>
             </p>
           </div>

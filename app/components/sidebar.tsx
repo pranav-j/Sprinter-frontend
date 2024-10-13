@@ -30,7 +30,7 @@ const Sidebar = () => {
     const dispatch = useAppDispatch();
     useEffect(() => {
         dispatch(fetchProjects())
-    }, []);
+    }, [dispatch]);
 
     if((currentProjectId === "") && (projects.length > 0)) {
         dispatch(setCurrentProjectId(projects[0]._id));

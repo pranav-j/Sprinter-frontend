@@ -6,8 +6,6 @@ import { setIsNewTaskModalOpen } from "@/redux/slices/items/newTaskModalSlice";
 import { createItem } from "@/redux/slices/items/itemsSlice";
 import { useDropzone } from "react-dropzone";
 
-// import { createTask } from "@/redux/slices/tasksSlice";
-
 const NewTaskModal = () => {
     const [failedTaskCreation, setFailedTaskCreation] = useState<boolean>(false);
     const [title, setTitle] = useState<string>("");
@@ -26,20 +24,6 @@ const NewTaskModal = () => {
     
     const dispatch = useAppDispatch();
 
-    // const handleSubmit = async (e: React.FormEvent) => {
-    //     e.preventDefault();
-    //     try {
-    //         const response = await axios.post("${process.env.NEXT_PUBLIC_BASE_URL}/api/item", 
-    //             { projectId: currentProjectId, title, description, type, start, end, assignee }, 
-    //             { withCredentials: true }
-    //         );
-    //         dispatch(setIsNewTaskModalOpen());
-    //         setFailedTaskCreation(false);
-    //     } catch (error) {
-    //         setFailedTaskCreation(true);
-    //         console.error("Error creating task:", error);
-    //     }
-    // };
 
     const onDrop = useCallback((acceptedFiles: File[]) => {
         setFiles((previousFiles) => [...previousFiles, ...acceptedFiles])
@@ -55,18 +39,6 @@ const NewTaskModal = () => {
             'text/plain': ['.txt']
         }
     });
-
-    // const handleSubmit = async (e: React.FormEvent) => {
-    //     e.preventDefault();
-    //     try {
-    //         await dispatch(createItem({projectId: currentProjectId, title, description, type, start, end, assignee, attachments: files}));
-    //         dispatch(setIsNewTaskModalOpen());
-    //         setFailedTaskCreation(false);
-    //     } catch (error) {
-    //         setFailedTaskCreation(true);
-    //         console.error("Error creating task:", error);
-    //     }
-    // };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -204,8 +176,8 @@ const NewTaskModal = () => {
                         </label>
                         <div {...getRootProps()} className="w-full p-4 border-dashed border-2 border-gray-300 rounded-lg">
                             <input {...getInputProps()} />
-                            <p>Drag 'n' drop some files here, or click to select files</p>
-                        </div>
+                            <p>Drag &apos;n&apos; drop some files here, or click to select files</p>
+                            </div>
                         {files.length > 0 && 
                             <div className="flex flex-col gap-2 mt-4 p-4 border-dashed border-2 border-gray-300 rounded-lg">
                                 {files.map((file, index) => (

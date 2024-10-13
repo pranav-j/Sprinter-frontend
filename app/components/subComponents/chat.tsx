@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 import { useAppSelector, useAppDispatch } from '@/redux/hooks';
+import Image from 'next/image';
 
 import { Socket } from "socket.io-client"; // import Socket type
 import { addNewMessage, addOldMessages } from '@/redux/slices/chat/chatSlice';
@@ -83,19 +84,40 @@ const Chat = ({ socket }: ChatProps) => {
         <div className="flex h-full rounded-lg">
             {/* Sidebar for members and group */}
             <div className="w-1/4 bg-gray-200 p-4 overflow-auto rounded-l-lg">
-                <h1>PROJECTS</h1>
-                <div key={currentProject?._id} onClick={() => setMessageTo(currentProject?._id || '')} className={`flex items-center p-2 cursor-pointer ${messageTo === currentProject?._id && 'bg-green-300 rounded'}`}>
-                    <img className="w-10 h-10 rounded-full" src={"https://robohash.org/111.235.68.162.png"} alt={currentProject?.title} />
-                    <span className="ml-2">{currentProject?.title}</span>
-                </div>
-                <h1>MEMBERS</h1>
-                {members.map((member) => (loggedInUser?._id !== member._id &&
-                    <div key={member._id} onClick={() => setMessageTo(member._id)} className={`flex items-center p-2 cursor-pointer ${messageTo === member._id && 'bg-green-300 rounded'}`}>
-                        <img className="w-10 h-10 rounded-full" src={member.profilePic || "https://robohash.org/111.235.68.162.png"} alt={member.firstName} />
-                        <span className="ml-2">{member.firstName} {member.lastName}</span>
-                    </div>
-                ))}
+            <h1>PROJECTS</h1>
+            <div 
+                key={currentProject?._id} 
+                onClick={() => setMessageTo(currentProject?._id || '')} 
+                className={`flex items-center p-2 cursor-pointer ${messageTo === currentProject?._id && 'bg-green-300 rounded'}`}
+            >
+                <Image 
+                    className="w-10 h-10 rounded-full" 
+                    src="https://robohash.org/111.235.68.162.png" 
+                    alt={currentProject?.title || "Project title"} 
+                    width={40} 
+                    height={40} 
+                />
+                <span className="ml-2">{currentProject?.title}</span>
             </div>
+            <h1>MEMBERS</h1>
+            {members.map((member) => (loggedInUser?._id !== member._id &&
+                <div 
+                    key={member._id} 
+                    onClick={() => setMessageTo(member._id)} 
+                    className={`flex items-center p-2 cursor-pointer ${messageTo === member._id && 'bg-green-300 rounded'}`}
+                >
+                    <Image 
+                        className="w-10 h-10 rounded-full" 
+                        src={member.profilePic || "https://robohash.org/111.235.68.162.png"} 
+                        alt={member.firstName} 
+                        width={40} 
+                        height={40} 
+                    />
+                    <span className="ml-2">{member.firstName} {member.lastName}</span>
+                </div>
+            ))}
+            </div>
+
 
             {/* Chat Area */}
             <div className="w-3/4 bg-white p-4 flex flex-col justify-between rounded-r-lg">

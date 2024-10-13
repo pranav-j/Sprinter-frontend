@@ -8,6 +8,8 @@ import { TiDocumentText } from "react-icons/ti";
 import { IoCheckmarkDoneCircleOutline } from "react-icons/io5";
 import { CgDebug } from "react-icons/cg";
 import { FaRegComment } from "react-icons/fa6";
+import Image from "next/image";
+
 
 interface ItemProp {
     item: Itemm
@@ -73,20 +75,23 @@ const Item = ({item}: ItemProp) => {
                         
                         {assignee ? (
                             assignee.profilePic ? (
-                            <img
-                                src={assignee.profilePic}
-                                alt={assignee.firstName}
-                                className="w-5 h-5 rounded-full"
-                            />
+                                <Image
+                                    src={assignee.profilePic}
+                                    alt={assignee.firstName || 'Assignee'}
+                                    width={20}
+                                    height={20}
+                                    className="w-5 h-5 rounded-full"
+                                />
                             ) : (
-                            <div className="w-5 h-5 rounded-full bg-gray-300 flex items-center justify-center">
-                                <span className="text-sm font-bold">
-                                {assignee.firstName.charAt(0)}
-                                </span>
-                            </div>
+                                <div className="w-5 h-5 rounded-full bg-gray-300 flex items-center justify-center">
+                                    <span className="text-sm font-bold">
+                                        {assignee.firstName ? assignee.firstName.charAt(0) : ''}
+                                    </span>
+                                </div>
                             )
-                        ) : 
-                        <button onClick={takeUpItem} className="w-5 h-5 rounded-full border">🫳</button>}
+                        ) : (
+                            <button onClick={takeUpItem} className="w-5 h-5 rounded-full border">🫳</button>
+                        )}
                     </div>
 
 

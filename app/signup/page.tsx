@@ -111,7 +111,6 @@ const Signup: React.FC = () => {
         console.error("Error signing up:", error);
       }
     }
-
   };
 
   const handleOtpSubmit = async (e: React.FormEvent<HTMLFormElement>) => {

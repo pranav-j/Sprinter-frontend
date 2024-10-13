@@ -1,6 +1,8 @@
 import { useAppSelector } from "@/redux/hooks";
 import { Member } from "@/redux/slices/membersSlice"
+import Image from "next/image";
 import { useEffect } from "react";
+
 
 interface MemberCardProps {
     member: Member;
@@ -19,7 +21,13 @@ const MemberCard = ({ member }: MemberCardProps) => {
 
     return(
         <div className="min-w-[200px] max-h-[300px] bg-white rounded-lg shadow-md p-4 m-2">
-            <img className="w-16 h-16 rounded-full mx-auto" src={member.profilePic || "https://robohash.org/red"} alt={member.firstName} />
+            <Image
+                className="w-16 h-16 rounded-full mx-auto"
+                src={member.profilePic || "https://robohash.org/red"}
+                alt={member.firstName || 'Member'}
+                width={64}
+                height={64}
+            />
             <h2 className="text-center font-bold text-xl mt-2">{member.firstName} {member.lastName}</h2>
             <p className="text-center text-gray-600">{member.email}</p>
             <div className="mt-4">

@@ -9,6 +9,7 @@ import { RxCross2 } from "react-icons/rx";
 import { FaBars } from "react-icons/fa6";
 import Link from "next/link";
 import axios from "axios";
+import Image from "next/image";
 
 const DashboardHeader = () => {
     const dispatch = useAppDispatch();
@@ -26,7 +27,7 @@ const DashboardHeader = () => {
         console.log("loggedInUser........", loggedInUser);
         console.log("currentItemId........", currentItemId);
         
-    }, [isCollapsed, selectedTab, currentItemId])
+    }, [isCollapsed, selectedTab, currentItemId, loggedInUser])
 
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
@@ -105,10 +106,12 @@ const DashboardHeader = () => {
             </div>
             <div className="right flex items-center relative">
                 <div className="flex items-center" onClick={handleProfileClick}>
-                    <img 
+                    <Image 
                         className="size-10 rounded-full border-2 border-[#d4d5d6] cursor-pointer"
                         src={loggedInUser?.profilePic || "https://robohash.org/111.235.68.162.png"} 
-                        
+                        alt="User profile picture"
+                        width={40}
+                        height={40}
                     />
                     <h3 className="pr-8 pl-3">{loggedInUser?.firstName} {loggedInUser?.lastName}</h3>
                 </div>
