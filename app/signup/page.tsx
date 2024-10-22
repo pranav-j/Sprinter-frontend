@@ -6,7 +6,7 @@ import axios from "axios";
 import { useRouter } from 'next/navigation';
 import React, { useState } from "react";
 
-
+ 
 const Signup: React.FC = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [firstName, setFirstName] = useState<string>("");
@@ -22,6 +22,7 @@ const Signup: React.FC = () => {
   const [emailError, setEmailError] = useState<string>("");
   const [passwordError, setPasswordError] = useState<string>("");
   const dispatch = useAppDispatch();
+
   // GOOGLE OAuth--------------------------------------------------
 
   const { userExistsError } = useAppSelector(state => state.userReducer);

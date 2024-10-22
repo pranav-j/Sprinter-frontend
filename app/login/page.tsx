@@ -22,29 +22,6 @@ export default function Home() {
 
   const dispatch = useAppDispatch();
 
-  // GOOGLE OAuth--------------------------------------------------
-
-  // const googleSignupResponse = async(response: any) => {
-  //   console.log("GOOGLE signin response.........", response);
-  //   try {
-  //     const res = await axios.post('${process.env.NEXT_PUBLIC_BASE_URL}/api/googleOAuth', response);
-
-  //     console.log("Response from backend:", res.data);
-  //   } catch (error) {
-  //     if (axios.isAxiosError(error) && error.response) {
-  //       // The request was made and the server responded with a status code
-  //       // that falls out of the range of 2xx
-  //       if (error.response.status === 409) {
-  //         setUserExists(error.response.data.message);
-  //       } else {
-  //         console.log("Error response from server:", error.response.data);
-  //       }
-  //     } else {
-  //       // Something happened in setting up the request that triggered an Error
-  //       console.log("Error sending token:", error);
-  //     }
-  //   }
-  // };
 
   const { userExistsError } = useAppSelector(state => state.userReducer);
 

@@ -22,24 +22,6 @@ const NewProjectModal = () => {
         console.log("failedPostCreation......", failedPostCreation);
     }, [title, description])
 
-    // const handleSubmit = async(e: React.FormEvent) => {
-    //     e.preventDefault();
-    //     try {
-    //         const response = await axios.post("${process.env.NEXT_PUBLIC_BASE_URL}/api/post", 
-    //             { title, description }, 
-    //             { withCredentials: true }
-    //         );
-            
-    //         if(response.status === 200){
-    //             dispatch(setIsNewProjectModalOpen());
-    //             setFailedPostCreation(false);
-    //             console.log("failedPostCreation......", failedPostCreation);
-    //         }
-    //     } catch (error) {
-    //         setFailedPostCreation(true);
-    //         console.error("Error creating project:", error);
-    //     }
-    // };
 
     const handleSubmit = async(e: React.FormEvent) => {
         e.preventDefault();

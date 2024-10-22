@@ -24,24 +24,7 @@ const DropArea = ({index, moveToSprintId = null, moveItemToBacklog = false}: Dro
 
     const handleOnDrop = async (e: React.DragEvent) => {
         e.preventDefault();
-        // e.stopPropagation();
         setShowDropArea(false);
-        // try {
-        //     const response = await axios.post("${process.env.NEXT_PUBLIC_BASE_URL}/api/moveItem", 
-        //         {
-        //             insertAt: index,
-        //             itemId: draggableitemId,
-        //             itemSprintId: draggableItemSprintId,
-        //             moveToSprintId,
-        //             moveItemToBacklog,
-        //             projectId: currentProjectId
-        //         }, 
-        //         { withCredentials: true }
-        //     );
-        //     console.log("RESPONSE TEST.......", response);
-        // } catch (error) {
-        //     console.error("Error in moving item:", error);
-        // }
         dispatch(moveItem({
             insertAt: index,
             draggableItemId,

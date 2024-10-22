@@ -3,7 +3,7 @@ import axios from "axios";
 import { useRouter } from 'next/navigation';
 import React, { useState } from "react";
 
-
+ 
 export default function InviteSignup () {
     const [email, setEmail] = useState<string>("");
     const [tempPassword, setTempPassword] = useState<string>("");

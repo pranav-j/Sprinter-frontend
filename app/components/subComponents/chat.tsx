@@ -10,9 +10,6 @@ interface ChatProps {
     socket: Socket;
 }
 
-// const socket = io('${process.env.NEXT_PUBLIC_BASE_URL}', {
-//     withCredentials: true,
-// });
 
 const Chat = ({ socket }: ChatProps) => {
     const members = useAppSelector((state) => state.MembersReducer.members);

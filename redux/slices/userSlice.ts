@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
+ 
 interface User {
     _id: string;
     firstName: string;
@@ -72,21 +73,21 @@ const userSlice = createSlice({
 
 
             .addCase(OAuth.pending, (state) => {
-                state.status = 'pending';
-                state.userExistsError = null;
-                state.loginError = null;
-              })
-              .addCase(OAuth.fulfilled, (state, action) => {
-                state.status = 'fulfilled';
-                state.userExistsError = null;
-                state.loginError = null;
-                state.user = action.payload;
-              })
-              .addCase(OAuth.rejected, (state, action) => {
-                state.status = 'rejected';
-                state.userExistsError = action.error.message as string;
-                state.user = null;
-              });
+              state.status = 'pending';
+              state.userExistsError = null;
+              state.loginError = null;
+            })
+            .addCase(OAuth.fulfilled, (state, action) => {
+              state.status = 'fulfilled';
+              state.userExistsError = null;
+              state.loginError = null;
+              state.user = action.payload;
+            })
+            .addCase(OAuth.rejected, (state, action) => {
+              state.status = 'rejected';
+              state.userExistsError = action.error.message as string;
+              state.user = null;
+            });
     }
 })
 

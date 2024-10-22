@@ -17,34 +17,6 @@ const NewSprintModal = () => {
 
     const dispatch = useAppDispatch();
 
-    // const handleSubmit = async (e: React.FormEvent) => {
-    //     e.preventDefault();
-    //     try {
-    //         await dispatch(createSprint({ sprintName, description, durationinweeksInWeeks: durationinweeks }));
-    //         dispatch(setIsNewSprintModalOpen());
-    //         setFailedSprintCreation(false);
-    //     } catch (error) {
-    //         setFailedSprintCreation(true);
-    //         console.error("Error creating sprint:", error);
-    //     }
-    // };
-
-    // const handleSubmit = async (e: React.FormEvent) => {
-    //     e.preventDefault();
-    //     try {
-    //         const response = await axios.post("${process.env.NEXT_PUBLIC_BASE_URL}/api/sprint", 
-    //             { sprintName, description, durationInWeeks, projectId: currentProjectId }, 
-    //             { withCredentials: true }
-    //         );
-    //         // await dispatch(createSprint({ sprintName, description, durationinweeksInWeeks: durationinweeks }));
-    //         dispatch(setIsNewSprintModalOpen());
-    //         setFailedSprintCreation(false);
-    //     } catch (error) {
-    //         setFailedSprintCreation(true);
-    //         console.error("Error creating sprint:", error);
-    //     }
-    // };
-
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
