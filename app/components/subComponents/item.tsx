@@ -8,6 +8,7 @@ import { TiDocumentText } from "react-icons/ti";
 import { IoCheckmarkDoneCircleOutline } from "react-icons/io5";
 import { CgDebug } from "react-icons/cg";
 import { FaRegComment } from "react-icons/fa6";
+import { PiHandGrabbingLight } from "react-icons/pi";
 import Image from "next/image";
 
 
@@ -51,18 +52,18 @@ const Item = ({item}: ItemProp) => {
 
     return(
         <div 
-            className="flex w-full h-28 border-b-2 px-4 py-3" 
+            className="flex w-full h-28 border-b-2 px-4 py-3 opacity-100" 
             draggable
             onDrag={handelOnDrag}
             onDragEnd={handleOnDragEnd}
+            style={{ opacity: 1 }}
             >
             <div className="w-11 flex ">
                 {
-                    item.type === 'task' ? <IoCheckmarkDoneCircleOutline /> :
-                    item.type === 'bug' ? <CgDebug /> :
-                    item.type === 'story' ? <TiDocumentText /> : null
-                }
-                
+                    item.type === 'task' ? <IoCheckmarkDoneCircleOutline className="text-blue-500" /> :
+                    item.type === 'bug' ? <CgDebug className="text-red-500" /> :
+                    item.type === 'story' ? <TiDocumentText className="text-green-500" /> : null
+                }                
             </div>
             
             <div className="w-full cursor-pointer">
@@ -70,7 +71,7 @@ const Item = ({item}: ItemProp) => {
                     <h1  onClick={() => dispatch(setCurrentItemId(item._id))}>{item._id}</h1>
                     <div className="flex gap-2">
                         {loggedInUser?._id === item.createdBy &&
-                            <button onClick={handleDelete} className="h-5 px-2 text-xs text-white bg-red-500 rounded-full border">Delete</button>
+                            <button onClick={handleDelete} className="h-5 px-2 text-xs flex text-center text-white bg-red-500 rounded-full border">Delete</button>
                         }
                         
                         {assignee ? (
@@ -90,7 +91,7 @@ const Item = ({item}: ItemProp) => {
                                 </div>
                             )
                         ) : (
-                            <button onClick={takeUpItem} className="w-5 h-5 rounded-full border">🫳</button>
+                            <button onClick={takeUpItem} className="w-5 h-5 rounded-full border flex items-center"><PiHandGrabbingLight className="w-5 h-5" /></button>
                         )}
                     </div>
 
@@ -98,11 +99,18 @@ const Item = ({item}: ItemProp) => {
                 </div>
                 
                 <h2  onClick={() => dispatch(setCurrentItemId(item._id))} className="py-1 line-clamp-1">{item.title}</h2>
-                <div className="flex justify-between">
-                    <h3  onClick={() => dispatch(setCurrentItemId(item._id))}>Status: {item.status}</h3>
+                <div className="flex justify-between text-sm">
+                    <span onClick={() => dispatch(setCurrentItemId(item._id))} className=" text-gray-400 flex items-center">
+                        Status: 
+                        <p className={item.status === "todo" ? `text-red-500 pl-1` :
+                                      item.status === "onGoing" ? `text-orange-400 pl-1` :
+                                      item.status === "done" ? `text-green-400 pl-1` : ''}>                                        
+                            {item.status}
+                        </p>
+                    </span>
                     {item.comments && 
                         <div className="flex items-center space-x-2">
-                            <FaRegComment />
+                            <FaRegComment className="text-gray-400" />
                             <p>{item.comments.length}</p>
                         </div>
                     }

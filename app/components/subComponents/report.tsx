@@ -17,7 +17,7 @@ const Reports = () => {
               {STATUS_LABELS.map((label, index) => (
                 <div key={index} className="flex items-center gap-2">
                   <span
-                    className="inline-block w-3 h-3"
+                    className="inline-block w-3 h-3 rounded-2xl"
                     style={{ backgroundColor: COLORS[index] }}
                   />
                   <span>{label}</span>

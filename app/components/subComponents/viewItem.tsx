@@ -110,19 +110,7 @@ const ViewItemModal = () => {
                     value={description} 
                     onChange={(e) => setDescription(e.target.value)} 
                     className="w-full px-3 py-2 border rounded-lg mb-4 min-h-[100px] max-h-[500px]"
-                />
-                {/* <textarea 
-                    value={description} 
-                    onChange={(e) => setDescription(e.target.value)} 
-                    onInput={(e) => {
-                        const target = e.target as HTMLTextAreaElement;
-                        target.style.height = "auto";  // Reset height
-                        target.style.height = `${target.scrollHeight}px`;  // Set height based on scrollHeight
-                    }} 
-                    className="w-full px-3 py-2 border rounded-lg mb-4 overflow-hidden resize-none"
-                    style={{ minHeight: "50px" }}  // Optional: Set minimum height
-                /> */}
-                
+                />            
 
                 <label className="block mb-2 font-medium">Type</label>
                 <select 

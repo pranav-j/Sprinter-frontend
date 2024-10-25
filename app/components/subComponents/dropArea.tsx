@@ -35,23 +35,41 @@ const DropArea = ({index, moveToSprintId = null, moveItemToBacklog = false}: Dro
           }));
     };
 
+    // return (
+    //     <>
+    //         <div
+    //             className={`w-full h-4 border-b-2`}
+    //             onDragEnter={() => setShowDropArea(true)}
+    //             onDragLeave={() => setShowDropArea(false)}
+    //             onDragOver={(e) => e.preventDefault()}
+    //             onDrop={handleOnDrop}
+    //         >
+    //         </div>
+    //         {showDropArea && (
+    //             <h1 className={`w-full h-10 border-b-2`}>
+    //                 Drop Area
+    //             </h1>
+    //         )}
+    //     </>
+    // );
+
+
+    
+
     return (
         <>
             <div
-                className={`w-full h-4 border-b-2`}
+                className={`w-full h-2 ${showDropArea ? 'bg-[#14b473] ' : ' '}`}
                 onDragEnter={() => setShowDropArea(true)}
                 onDragLeave={() => setShowDropArea(false)}
                 onDragOver={(e) => e.preventDefault()}  // Prevent default to allow drop
                 onDrop={handleOnDrop}
             >
             </div>
-            {showDropArea && (
-                <h1 className={`w-full h-10 border-b-2`}>
-                    Drop Area
-                </h1>
-            )}
         </>
     );
+
+
 };
 
 export default DropArea;

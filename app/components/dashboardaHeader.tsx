@@ -50,7 +50,7 @@ const DashboardHeader = () => {
     };
 
     return(
-        <div className="flex justify-between h-15 border-b-2 border-[#818181]" style={{ borderBottomWidth: '0.5px' }}>
+        <div className="flex justify-between h-16 border-b-2 border-[#818181]" style={{ borderBottomWidth: '0.5px' }}>
             <div className="left flex items-center">
                 <div className={`logo w-[212px] flex justify-between items-center h-full ${!isCollapsed ? 'bg-[rgb(18,29,51)]' :  null} `}>
                 <div className={`flex items-center h-full pl-4 pr-8 ${!isCollapsed ? 'text-[#b9c0c1]' : ''} text-[1.4285714286rem]`}>
@@ -61,8 +61,8 @@ const DashboardHeader = () => {
                     </button>
                 </div>
 
-                <div className={`flex flex-col pl-4 pt-[3px] ${isCollapsed ? 'border-l-2' : ''}  h-full`}>
-                    <h3 className="text-xl h-7 font-bold">{currentProject?.title}</h3>
+                <div className={`flex flex-col justify-between pl-4  ${isCollapsed ? 'border-l-2' : ''}  h-full`}>
+                    <h3 className="text-xl h-7 pt-1  font-bold">{currentProject?.title}</h3>
                     <ul className="flex gap-4 text-[1rem]">
                         <button 
                             onClick={() => dispatch(setTab("Backlogs"))}
