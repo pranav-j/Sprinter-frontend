@@ -3,9 +3,9 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { OAuth } from "@/redux/slices/userSlice";
 import { GoogleLogin, useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
+import Image from "next/image";
 import { useRouter } from 'next/navigation';
 import React, { useState } from "react";
-
  
 const Signup: React.FC = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -130,14 +130,12 @@ const Signup: React.FC = () => {
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-300">
-      <div className="sm:w-1/2 md:w-1/3 lg:w-1/4 bg-white shadow-lg rounded-xl p-8 pb-3 mt-8">
+      <div className="sm:w-1/2 md:w-1/3 lg:w-1/4 bg-white shadow-lg rounded-xl p-8 pb-3 m-8">
         <h2 className="text-2xl font-bold mb-4 text-center text-black">
-          Sign Up
+          Welcome to <span className='text-green-500'>Sprinter</span>
         </h2>
-        <div className="flex justify-center items-center bg-white rounded-lg p-2 mt-4">
-          <div className="bg-black rounded-md h-8 p-4 flex justify-center items-center">
-            <span className="text-white text-lg font-bold">SPRINTER</span>
-          </div>
+        <div className="flex justify-center items-center rounded-lg p-2 mb-4">
+          <Image src="/images/sprinter-removebg-preview-cropped.PNG" height={100} width={100} alt="logo" />
         </div>
         <div className='flex justify-center items-center mt-2'>
           {userExistsError && <p className="text-red-500 text-xs">{userExistsError}</p>}

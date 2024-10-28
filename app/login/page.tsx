@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { GoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
+import Image from 'next/image';
 
 export default function Home() {
   const router = useRouter();
@@ -98,12 +99,10 @@ export default function Home() {
     <div className="flex justify-center items-center min-h-screen bg-gray-300">
       <div className="sm:w-1/2 md:w-1/3 lg:w-1/4 bg-white shadow-lg rounded-xl p-8 pb-3 mt-8">
         <h2 className="text-2xl font-bold text-center text-black">
-          Welcome to
+          Welcome to <span className='text-green-500'>Sprinter</span>
         </h2>
-        <div className="flex justify-center items-center bg-white rounded-lg p-2 mb-4">
-          <div className="bg-black rounded-md h-8 p-4 flex justify-center items-center">
-            <span className="text-white text-lg font-bold  ">SPRINTER</span>
-          </div>
+        <div className="flex justify-center items-center rounded-lg p-2 mb-4">
+          <Image src="/images/sprinter-removebg-preview-cropped.PNG" height={100} width={100} alt="logo" />
         </div>
         <div className='flex justify-between mt-2'>
           <button 
