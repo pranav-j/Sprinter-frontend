@@ -3,8 +3,6 @@
 import Image from "next/image";
 import LandingHeader from "./components/landingHeader";
 import { useState, useEffect } from 'react';
-import Script from "next/script";
-
 
 export default function LandingPage() {
   const [scrollPosition, setScrollPosition] = useState(0);
@@ -137,8 +135,6 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
-
-      <Script src="https://checkout.razorpay.com/v1/checkout.js" />
     </div>
   );
 }

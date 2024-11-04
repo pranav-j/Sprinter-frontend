@@ -158,7 +158,28 @@ const DashboardHeader = () => {
                     </ul>
                 </div>
             </div>
-            <button onClick={getSprinter} className="bg-[#14b473] text-white rounded-[50px] px-5 py-2">7 days left with free trial <span className="ml-1 px-2 py-1 rounded-2xl bg-red-500">SUBSCRIBE HERE</span></button>
+
+
+            {loggedInUser && !loggedInUser.subscribed && (() => {
+
+                const createdDate = new Date(loggedInUser.createdAt);
+                const currentDate = new Date();
+                const diffTime = createdDate.getTime() + 7 * 24 * 60 * 60 * 1000 - currentDate.getTime(); // Time left in ms
+                const remainingDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+                return remainingDays > 0 ? (
+                    <button onClick={getSprinter} className="bg-[#14b473] text-white rounded-[50px] px-5 py-2">
+                        {remainingDays} {remainingDays === 1 ? "day" : "days"} left with free trial 
+                        <span className="ml-1 px-2 py-1 rounded-2xl bg-red-500">SUBSCRIBE HERE</span>
+                    </button>
+                ) : (
+                    <button onClick={getSprinter} className="bg-[#14b473] text-white rounded-[50px] px-2 py-2">
+                        <span className="px-2 py-1 rounded-2xl bg-red-500">SUBSCRIBE HERE</span>
+                    </button>
+                );
+            })()}
+
+
             <div className="right flex items-center relative">
                 <div className="flex items-center" onClick={handleProfileClick}>
                     <Image 

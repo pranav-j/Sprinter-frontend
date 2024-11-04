@@ -8,6 +8,8 @@ interface User {
     lastName?: string;
     profilePic?: string;
     role: string;
+    createdAt: Date;
+    subscribed?: Boolean;
 };
 
 interface UserState {
