@@ -4,66 +4,10 @@ import Image from "next/image";
 import LandingHeader from "./components/landingHeader";
 import { useState, useEffect } from 'react';
 import Script from "next/script";
-import axios from "axios";
-import Razorpay from "react-razorpay/dist/razorpay";
 
 
 export default function LandingPage() {
   const [scrollPosition, setScrollPosition] = useState(0);
-
-  const getSprinter = async() => {
-    // alert("Gotcha......")
-
-    const order: any = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/create-order`, { amount: 500, receipt: 'receipt#1' }, { withCredentials: true })
-
-    console.log("order........", order);
-    
-
-    const options = {
-      key: 'rzp_test_ZKcJLyt29WoYex', // Replace with your Razorpay key_id
-      amount: order.data.amount,
-      currency: order.data.currency,
-      name: 'Your Company Name',
-      description: 'Test Transaction',
-      order_id: order.data.id, // This is the order_id created in the backend
-      // callback_url: 'http://localhost:3000/', // Your success URL
-      prefill: {
-        name: 'Your Name',
-        email: 'your.email@example.com',
-        contact: '9999999999'
-      },
-      theme: {
-        color: '#F37254'
-      },
-      handler: function (response: any) {
-        axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/verify-payment`, {
-          razorpay_order_id: response.razorpay_order_id,
-          razorpay_payment_id: response.razorpay_payment_id,
-          razorpay_signature: response.razorpay_signature
-        }, {
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          withCredentials: true
-        })
-        .then(res => {
-          if (res.data.status === 'ok') {
-            // window.location.href = '/payment-success';
-            console.log("payment SUCCESSFULL...");
-          } else {
-            alert('Payment verification failed');
-          }
-        })
-        .catch(error => {
-          console.error('Error:', error);
-          alert('Error verifying payment');
-        });
-      }
-    };
-
-    const rzp = new Razorpay(options);
-    rzp.open();
-  }
 
   useEffect(() => {
     const handleScroll = () => {
@@ -123,7 +67,7 @@ export default function LandingPage() {
             seamless collaboration, and user-friendly project management.
           </p>
           <div className="flex gap-4 mt-10 mb-3">
-            <button onClick={getSprinter} className="bg-red-500 border-none rounded px-8 py-3 text-white text-lg">ACCESS SPRINTER</button>
+            <button className="bg-red-500 border-none rounded px-8 py-3 text-white text-lg">ACCESS SPRINTER</button>
             <button className="border rounded px-8 py-3 border-black  text-lg">REQUEST DEMO</button>
           </div>
           <p>Paid plans starting from <span className="font-bold"> ₹70/user/month</span></p>

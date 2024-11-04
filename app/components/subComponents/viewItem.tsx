@@ -159,10 +159,29 @@ const ViewItemModal = () => {
                     </select>                    
                 }
 
-
                 <div className="mb-4">
-                    {/* File handling and display */}
+                    <label className="block mb-2 font-medium">Attachments</label>
+                    {currentItem?.attachments && currentItem.attachments.length > 0 ? (
+                        currentItem.attachments.map((attachment, index) => (
+                            <div key={index} className="mb-2">
+                                <a
+                                    href={attachment.link}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-blue-500 underline"
+                                >
+                                    {attachment.title}
+                                </a>
+                                <div className="text-sm text-gray-500">
+                                    Type: {attachment.metadata} | Size: {(attachment.size / 1024).toFixed(2)} KB
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        <p className="text-gray-500">No attachments available.</p>
+                    )}
                 </div>
+
 
                 <div className="mt-4">
                     <h3 className="font-medium mb-2">Comments</h3>

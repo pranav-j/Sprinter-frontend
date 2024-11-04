@@ -69,9 +69,6 @@ const Sprint = () => {
                     <div>
                         <label className="pr-4" htmlFor="options">Sprint</label>
                         <select className="border" id="options" name="options" onChange={handleSprintChange} value={selectedSprint || ''}>
-                            {/* {ongoingSprints.map((sprint) => (
-                                <option value={sprint._id} key={sprint._id}>{sprint.sprintName}</option>
-                            ))} */}
                             <optgroup label="Ongoing Sprints">
                                 {ongoingSprints.map((sprint) => (
                                     <option value={sprint._id} key={sprint._id}>{sprint.sprintName}</option>

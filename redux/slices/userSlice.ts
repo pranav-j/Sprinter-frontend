@@ -53,42 +53,42 @@ export const OAuth = createAsyncThunk<User, any, { rejectValue: string }>(
 );  
 
 const userSlice = createSlice({
-    name: 'user',
-    initialState,
-    reducers: {},
-    extraReducers: (builder) => {
-        builder
-            .addCase(login.pending, (state) => {
-                state.status = 'pending';
-            })
-            .addCase(login.fulfilled, (state, action) => {
-                state.status = 'fulfilled';
-                state.loginError = '';
-                state.user = action.payload;
-            })
-            .addCase(login.rejected, (state, action) => {
-                state.status = 'rejected';
-                state.loginError = action.error.message as string;
-            })
+  name: 'user',
+  initialState,
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(login.pending, (state) => {
+        state.status = 'pending';
+      })
+      .addCase(login.fulfilled, (state, action) => {
+        state.status = 'fulfilled';
+        state.loginError = '';
+        state.user = action.payload;
+      })
+      .addCase(login.rejected, (state, action) => {
+        state.status = 'rejected';
+        state.loginError = action.error.message as string;
+      })
 
 
-            .addCase(OAuth.pending, (state) => {
-              state.status = 'pending';
-              state.userExistsError = null;
-              state.loginError = null;
-            })
-            .addCase(OAuth.fulfilled, (state, action) => {
-              state.status = 'fulfilled';
-              state.userExistsError = null;
-              state.loginError = null;
-              state.user = action.payload;
-            })
-            .addCase(OAuth.rejected, (state, action) => {
-              state.status = 'rejected';
-              state.userExistsError = action.error.message as string;
-              state.user = null;
-            });
-    }
+      .addCase(OAuth.pending, (state) => {
+        state.status = 'pending';
+        state.userExistsError = null;
+        state.loginError = null;
+      })
+      .addCase(OAuth.fulfilled, (state, action) => {
+        state.status = 'fulfilled';
+        state.userExistsError = null;
+        state.loginError = null;
+        state.user = action.payload;
+      })
+      .addCase(OAuth.rejected, (state, action) => {
+        state.status = 'rejected';
+        state.userExistsError = action.error.message as string;
+        state.user = null;
+      });
+  }
 })
 
 export default userSlice.reducer;

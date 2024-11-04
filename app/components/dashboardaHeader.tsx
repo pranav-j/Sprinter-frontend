@@ -7,9 +7,11 @@ import { setTab } from "../../redux/slices/tabSlice";
 import { useRouter } from 'next/navigation';
 import { RxCross2 } from "react-icons/rx";
 import { FaBars } from "react-icons/fa6";
+import Razorpay from "react-razorpay/dist/razorpay";
 import Link from "next/link";
 import axios from "axios";
 import Image from "next/image";
+import Script from "next/script";
 
  
 const DashboardHeader = () => {
@@ -49,19 +51,70 @@ const DashboardHeader = () => {
         }    
     };
 
+    const getSprinter = async() => {
+        const order: any = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/create-order`, { amount: 500, receipt: 'receipt#1' }, { withCredentials: true })
+    
+        console.log("order........", order);
+        
+        const options = {
+          key: 'rzp_test_ZKcJLyt29WoYex', // Replace with your Razorpay key_id
+          amount: order.data.amount,
+          currency: order.data.currency,
+          name: 'Your Company Name',
+          description: 'Test Transaction',
+          order_id: order.data.id, // This is the order_id created in the backend
+          // callback_url: 'http://localhost:3000/', // Your success URL
+          prefill: {
+            name: 'Your Name',
+            email: 'your.email@example.com',
+            contact: '9999999999'
+          },
+          theme: {
+            color: '#F37254'
+          },
+          handler: function (response: any) {
+            axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/verify-payment`, {
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature
+            }, {
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              withCredentials: true
+            })
+            .then(res => {
+              if (res.data.status === 'ok') {
+                // window.location.href = '/payment-success';
+                console.log("payment SUCCESSFULL...");
+              } else {
+                alert('Payment verification failed');
+              }
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              alert('Error verifying payment');
+            });
+          }
+        };
+    
+        const rzp = new Razorpay(options);
+        rzp.open();
+    }
+
     return(
-        <div className="flex justify-between h-16 border-b-2 border-[#818181]" style={{ borderBottomWidth: '0.5px' }}>
+        <div className="flex justify-between items-center h-16 border-b-2 border-[#818181]" style={{ borderBottomWidth: '0.5px' }}>
             <div className="left flex items-center">
-                <div className={`logo w-[212px] flex justify-between items-center h-full ${!isCollapsed ? 'bg-[rgb(18,29,51)]' :  null} `}>
-                <div className={`flex items-center h-full pl-4 pr-8 ${!isCollapsed ? 'text-[#b9c0c1]' : ''} text-[1.4285714286rem]`}>
-                <Link href={"/"}><h1>Sprinter</h1></Link>
+                <div className={`logo w-[212px] border-b-2 border-[#818181] flex justify-between items-center h-full ${!isCollapsed ? 'bg-[rgb(18,29,51)]' :  null} `}>
+                    <div className={`flex items-center h-16 pl-4 pr-8 ${!isCollapsed ? 'text-[#b9c0c1]' : ''} text-[1.4285714286rem]`}>
+                        <Link href={"/"}><h1>Sprinter</h1></Link>
                     </div>
                     <button className={`px-2 ${!isCollapsed ? 'text-[#b9c0c1]' : ''}`} onClick={() => dispatch(toggleSidebar())}>
                     {isCollapsed ? <FaBars /> : <RxCross2 className="w-6 h-6 " />}
                     </button>
                 </div>
 
-                <div className={`flex flex-col justify-between pl-4  ${isCollapsed ? 'border-l-2' : ''}  h-full`}>
+                <div className={`flex flex-col gap-2 justify-between pl-4  ${isCollapsed ? 'border-l-2' : ''}  h-full`}>
                     <h3 className="text-xl h-7 pt-1  font-bold">{currentProject?.title}</h3>
                     <ul className="flex gap-4 text-[1rem]">
                         <button 
@@ -105,6 +158,7 @@ const DashboardHeader = () => {
                     </ul>
                 </div>
             </div>
+            <button onClick={getSprinter} className="bg-[#14b473] text-white rounded-[50px] px-5 py-2">7 days left with free trial <span className="ml-1 px-2 py-1 rounded-2xl bg-red-500">SUBSCRIBE HERE</span></button>
             <div className="right flex items-center relative">
                 <div className="flex items-center" onClick={handleProfileClick}>
                     <Image 
@@ -124,6 +178,7 @@ const DashboardHeader = () => {
                     </div>
                 )}
             </div>
+            <Script src="https://checkout.razorpay.com/v1/checkout.js" />
         </div>
     )
 };
