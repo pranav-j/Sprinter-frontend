@@ -10,6 +10,7 @@ export interface Sprint {
     durationInWeeks: number;
     description: string;
     startedOn?: string;
+    endedOn?: string;
     createdAt: string;
     updatedAt: string;
 };
@@ -17,6 +18,7 @@ export interface Sprint {
 interface SprintsSlice {
     fetchSprintsStatus: 'idle' | 'pending' | 'fulfilled' | 'rejected';
     startSprintsstatus: 'idle' | 'pending' | 'fulfilled' | 'rejected';
+    endSprintsstatus: 'idle' | 'pending' | 'fulfilled' | 'rejected';
     sprints: Sprint[];
     error: string | null;
 }
@@ -24,6 +26,7 @@ interface SprintsSlice {
 const initialState: SprintsSlice = {
     fetchSprintsStatus: 'idle',
     startSprintsstatus: 'idle',
+    endSprintsstatus: 'idle',
     sprints: [],
     error: null,
 }
@@ -43,6 +46,14 @@ export const startSprint = createAsyncThunk(
     'sprints/startSprint',
     async(sprintId: string) => {
         const response = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/startSprint`, { sprintId }, { withCredentials: true });
+        return response.data;
+    }
+);
+
+export const endSprint = createAsyncThunk(
+    'sprints/endSprint',
+    async(sprintId: string) => {
+        const response = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/endSprint`, { sprintId }, { withCredentials: true });
         return response.data;
     }
 );
@@ -79,6 +90,19 @@ const sprintsSlice = createSlice({
             })
             .addCase(startSprint.rejected, (state) => {
                 state.startSprintsstatus = 'rejected';
+            })
+            .addCase(endSprint.pending, (state) => {
+                state.endSprintsstatus = 'pending';
+            })
+            .addCase(endSprint.fulfilled, (state, action) => {
+                const index = state.sprints.findIndex((sprint) => sprint._id === action.payload.sprint._id);
+                if(index !== -1) {
+                    state.sprints[index] = action.payload.sprint;
+                }
+                state.endSprintsstatus = 'fulfilled';
+            })
+            .addCase(endSprint.rejected, (state) => {
+                state.endSprintsstatus = 'rejected';
             })
     }
 });

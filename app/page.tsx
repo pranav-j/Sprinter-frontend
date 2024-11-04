@@ -14,7 +14,7 @@ export default function LandingPage() {
   const getSprinter = async() => {
     // alert("Gotcha......")
 
-    const order: any = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/create-order`, { amount: 500, receipt: 'receipt#1' })
+    const order: any = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/create-order`, { amount: 500, receipt: 'receipt#1' }, { withCredentials: true })
 
     console.log("order........", order);
     
@@ -36,29 +36,28 @@ export default function LandingPage() {
         color: '#F37254'
       },
       handler: function (response: any) {
-        fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/verify-payment`, {
-          method: 'POST',
+        axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/verify-payment`, {
+          razorpay_order_id: response.razorpay_order_id,
+          razorpay_payment_id: response.razorpay_payment_id,
+          razorpay_signature: response.razorpay_signature
+        }, {
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({
-            razorpay_order_id: response.razorpay_order_id,
-            razorpay_payment_id: response.razorpay_payment_id,
-            razorpay_signature: response.razorpay_signature
-          })
-        }).then(res => res.json())
-          .then(data => {
-            if (data.status === 'ok') {
-              // window.location.href = '/payment-success';
-              console.log("payment SUCCESSFULL...");
-              
-            } else {
-              alert('Payment verification failed');
-            }
-          }).catch(error => {
-            console.error('Error:', error);
-            alert('Error verifying payment');
-          });
+          withCredentials: true
+        })
+        .then(res => {
+          if (res.data.status === 'ok') {
+            // window.location.href = '/payment-success';
+            console.log("payment SUCCESSFULL...");
+          } else {
+            alert('Payment verification failed');
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('Error verifying payment');
+        });
       }
     };
 

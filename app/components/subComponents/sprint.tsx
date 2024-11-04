@@ -2,14 +2,17 @@ import { useAppSelector, useAppDispatch } from "@/redux/hooks";
 import { useEffect, useState } from "react";
 import Item from "./item";
 import { changeItemStatus } from "@/redux/slices/items/itemsSlice";
+import { endSprint } from "@/redux/slices/sprints/sprintsSlice";
 import dayjs from "dayjs"; // Install dayjs for date handling
 
 const Sprint = () => {
     const [selectedSprint, setSelectedSprint] = useState<string | null>(null);
     const items = useAppSelector((state) => state.itemsReducer.items);
     const sprints = useAppSelector((state) => state.sprintsReducer.sprints);
-    const ongoingSprints = sprints.filter((sprint) => sprint.startedOn);
+    const ongoingSprints = sprints.filter((sprint) => !sprint.endedOn);
+    const finishedSprints = sprints.filter((sprint) => sprint.endedOn);
     const draggableitemId = useAppSelector((state) => state.draggableItemReducer.dreggedItemId);
+    const loggedInUser = useAppSelector((state) => state.userReducer.user);
 
     const dispatch = useAppDispatch();
 
@@ -31,6 +34,12 @@ const Sprint = () => {
     const handleStatusChange = async (statusId: 1 | 2 | 3) => {
         if (draggableitemId) {
             dispatch(changeItemStatus({ itemId: draggableitemId, statusId }));
+        }
+    };
+
+    const handleEndSprint = async() => {
+        if(selectedSprint) {
+            dispatch(endSprint(selectedSprint));
         }
     };
 
@@ -56,12 +65,31 @@ const Sprint = () => {
     return (
         <div className="flex flex-col w-full h-full bg-[#d9d5d5] overflow-y-auto">
             <div className="w-full px-4 py-2 bg-[#ffffff] border-2 rounded mb-3">
-                <label className="pr-4" htmlFor="options">Sprint</label>
-                <select className="border" id="options" name="options" onChange={handleSprintChange} value={selectedSprint || ''}>
-                    {ongoingSprints.map((sprint) => (
-                        <option value={sprint._id} key={sprint._id}>{sprint.sprintName}</option>
-                    ))}
-                </select>
+                <div className="flex justify-between">
+                    <div>
+                        <label className="pr-4" htmlFor="options">Sprint</label>
+                        <select className="border" id="options" name="options" onChange={handleSprintChange} value={selectedSprint || ''}>
+                            {/* {ongoingSprints.map((sprint) => (
+                                <option value={sprint._id} key={sprint._id}>{sprint.sprintName}</option>
+                            ))} */}
+                            <optgroup label="Ongoing Sprints">
+                                {ongoingSprints.map((sprint) => (
+                                    <option value={sprint._id} key={sprint._id}>{sprint.sprintName}</option>
+                                ))}
+                            </optgroup>
+                            <optgroup label="Finished Sprints">
+                                {finishedSprints.map((sprint) => (
+                                    <option value={sprint._id} key={sprint._id}>{sprint.sprintName}</option>
+                                ))}
+                            </optgroup>
+                        </select>
+                    </div>
+                    {
+                        loggedInUser?.role === "admin" ? 
+                        <button onClick={handleEndSprint} className="bg-[#14b473] text-white rounded px-2 py-1">Finish Sprint</button> :
+                        null
+                    }
+                </div>
 
                 {/* Progress Bar */}
                 {selectedSprintDetails && (
