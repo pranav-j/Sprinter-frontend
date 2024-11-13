@@ -17,9 +17,11 @@ import Chat from "./subComponents/chat";
 import Sprint from "./subComponents/sprint";
 import DropArea from "./subComponents/dropArea";
 import { useEffect, useState } from "react";
+import { RxCross2 } from "react-icons/rx";
 import axios from "axios";
 import { io } from 'socket.io-client';
 import { resetDeleteItemId } from "@/redux/slices/items/deleteItemIdSlice";
+import { Itemm } from "@/redux/slices/items/itemsSlice";
 
  
 const socket = io(`${process.env.NEXT_PUBLIC_BASE_URL}`, {
@@ -37,15 +39,10 @@ const TabDetails = () => {
 
     const sprints = useAppSelector((state) => state.sprintsReducer.sprints);
     const unstartedSprints = sprints.filter((sprint) => !sprint.startedOn);
-    // const ongoingSprints = sprints.filter((sprint) => sprint.startedOn);
 
     const [emails, setEmails] = useState([""]);
     const [reverseOrder, setReverseOrder] = useState<boolean>(false);
-    // const [selectedSprint, setSelectedSprint] = useState<string | null>(null);
 
-    // if(!selectedSprint && ongoingSprints.length > 0) {
-    //     setSelectedSprint(ongoingSprints[0]._id);
-    // };
 
     const handleEmailChange = (index: number, value: string) => {
       const newEmails = [...emails];
@@ -105,16 +102,6 @@ const TabDetails = () => {
         console.log("Messages in REDUX......", messages);        
     }, [messages]);
 
-    // -------------------------------------------------------------------------------------------------
-
-    // --------------------------------------------------
-
-    // useEffect(() => {
-    //     console.log('Sprints........', sprints);        
-    // }, [sprints])
-
-    // --------------------------------------------------
-
     const draggableitemId = useAppSelector((state) => state.draggableItemReducer.dreggedItemId);
     const draggableItemSprintId = useAppSelector((state) =>state.draggableItemSprintReducer.draggedItemSprintId);
     let moveItemToBacklog = false;
@@ -123,30 +110,136 @@ const TabDetails = () => {
         moveItemToBacklog = true;
     };
 
-    // useEffect(() => {
-    //     console.log("draggableitemId........", draggableitemId);
-    //     console.log("draggableItemSprintId........", draggableItemSprintId);        
-    // }, [draggableitemId, draggableItemSprintId])
-
-
-    // useEffect(() => {
-    //     console.log('Sprints..........', sprints);
-        
-    // }, [sprints])
-
 
 
     useEffect(() => {
         console.log("deleteItemId............", deleteItemId);       
     }, [deleteItemId]);
 
+    // ---------------------------------------------------------------------
+
+    // useEffect(() => {
+    //     dispatch(fetchItems(currentProjectId));
+    //     dispatch(fetchSprints(currentProjectId));
+    // }, [currentProjectId]);
+
+    // -------------------
+
+    // const [offset, setOffset] = useState(0);
+    // const [limit] = useState(5);
+    // const hasMore = useAppSelector((state) => state.itemsReducer.hasMore);
+
+    // const loadItems = () => {
+    //     if (hasMore) {
+    //         console.log("========loadItems========", currentProjectId, offset)
+    //         dispatch(fetchItems({ projectId: currentProjectId, offset})).then(() => {
+    //             setOffset(offset + limit);
+    //         });
+    //     }
+    // };
+
+    // useEffect(() => {
+    //     console.log("++++++++useEffect+++++++", hasMore)
+    //     loadItems();  // Initial load
+    //     dispatch(fetchSprints(currentProjectId));
+    // }, [currentProjectId]);
+
+    // const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    //     console.log("#########handleScroll##########", hasMore);
+    //     const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
+    //     if (scrollHeight - scrollTop <= clientHeight) {
+    //         console.log("Loading items due to SCROLL........");            
+    //         loadItems();  // Load more items when scrolling to the bottom
+    //     }
+    // };
+
+    const [offset, setOffset] = useState(0);
+    const [limit] = useState(5);
+
+    const loadItems = () => {
+        console.log("========loadItems========", currentProjectId, offset);
+        dispatch(fetchItems({ projectId: currentProjectId, offset })).then((action) => {
+            // // Check if fewer than `limit` items were returned, meaning no more to load
+            // if (action.payload.items.length < limit) {
+            //     // You can set a flag or simply stop calling `loadItems` based on this check
+            //     console.log("No more items to load.");
+            // } else {
+            //     setOffset(offset + limit); // Only increment if more items are likely available
+            // }
+            // SHOULD FIX THE ABOVE
+            setOffset(offset + limit);
+        });
+    };
+
     useEffect(() => {
-        dispatch(fetchItems(currentProjectId));
+        console.log("++++++++useEffect+++++++");
+        loadItems();  // Initial load
         dispatch(fetchSprints(currentProjectId));
     }, [currentProjectId]);
 
+    const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+        const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
+        if (scrollHeight - scrollTop <= clientHeight) {
+            console.log("Loading items due to SCROLL........");
+            loadItems();
+        }
+    };
+
+
+    // ---------------------------------------------------------------------
+
+    const [openSearch, setOpenSearch] = useState(false);
+    const [searchInput, setSearchInput] = useState("");
+    const [debouncedValue, setDebouncedValue] = useState("");
+    const [searchResult, setSearchResult] = useState<Itemm[]>([]);
+
+    useEffect(() => {
+        const debounceHandler = setTimeout(() => {
+            setSearchInput(debouncedValue);
+        }, 500);
+
+        return () => {
+            clearTimeout(debounceHandler);
+        }
+    }, [debouncedValue]);
+
+    useEffect(() => {
+        console.log(searchInput);
+        const search = async() => {
+            try {
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/searchItem`, {
+                    params: {searchTerm: searchInput},
+                    withCredentials: true
+                })
+                setSearchResult(response.data);
+                console.log("SEARCH result.....", response.data, searchResult);
+                
+            } catch (error) {
+                console.log("Error with search", error);
+            }
+        }
+        search();
+    }, [searchInput]);
+
+    const closeSearch = () => {
+        setOpenSearch(!openSearch);
+        setSearchInput("");
+        setDebouncedValue("");
+        setSearchResult([])
+    };
+
     const itemz = useAppSelector((state) => state.itemsReducer.items);
-    let backlogItems = itemz.filter(item => !item.sprintId);
+
+    let backlogItems: Itemm[];
+
+    if(openSearch && searchResult) {
+        backlogItems = searchResult;
+    }else if(openSearch && !searchResult) {
+        backlogItems = [];
+    } else {
+        backlogItems = itemz.filter(item => !item.sprintId);
+    }
+    // let backlogItems = itemz.filter(item => !item.sprintId);
 
     if(reverseOrder) {
         backlogItems = backlogItems.reverse();
@@ -156,19 +249,35 @@ const TabDetails = () => {
         setReverseOrder(!reverseOrder);
     }
 
+
     if(selectedTab === "Backlogs") {
         return(
             <div className="flex gap-3 p-3 w-full h-full bg-[#d9d5d5]">
                 <div className="w-1/2 overflow-hidden h-full border-2 rounded mb-2 bg-[#ffffff]">
                     <div className="flex justify-between px-4 py-2 h-10 border-b-2">
-                        <h1 className="font-bold">Backlog</h1>
+                        { openSearch ? 
+                            <form className="flex w-full justify-between">
+                                <input onChange={(e) => setDebouncedValue(e.target.value)} value={debouncedValue} className="border rounded-2xl w-[100%] mr-2" placeholder="Search....."></input>
+                                <button type="button" onClick={closeSearch}><RxCross2 /></button>
+                            </form>
+                            :
+                            <>
+                                <h1 className="font-bold">Backlog</h1>
+                                <div className="flex gap-3">
+                                    <button onClick={() => dispatch(setIsNewTaskModalOpen())}><MdAdd /></button>
+                                    <button onClick={() => setOpenSearch(!openSearch)}><FiSearch /></button>
+                                    <button onClick={handleReverseOrder}><BiSortAlt2 /></button>
+                                </div>
+                            </>
+                        }
+                        {/* <h1 className="font-bold">Backlog</h1>
                         <div className="flex gap-3">
                             <button onClick={() => dispatch(setIsNewTaskModalOpen())}><MdAdd /></button>
-                            <button><FiSearch /></button>
+                            <button onClick={() => setOpenSearch(!openSearch)}><FiSearch /></button>
                             <button onClick={handleReverseOrder}><BiSortAlt2 /></button>
-                        </div>
+                        </div> */}
                     </div>
-                    <div className="h-full overflow-y-auto pb-10 flex flex-col">
+                    <div onScroll={handleScroll}  className="h-full overflow-y-auto pb-10 flex flex-col">
                         <DropArea index={0} moveItemToBacklog />
 
                         {backlogItems.length === 0 ? (
@@ -196,8 +305,7 @@ const TabDetails = () => {
                                 <button onClick={() => dispatch(setIsNewSprintModalOpen())}><MdAdd /></button> :
                                 null
                             }
-                            
-                            <button><FiSearch /></button>
+                            {/* <button><FiSearch /></button> */}
                         </div>
                     </div>
                     <div className="flex flex-col gap-1 h-full overflow-y-auto rounded">

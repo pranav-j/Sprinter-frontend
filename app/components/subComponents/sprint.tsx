@@ -2,6 +2,7 @@ import { useAppSelector, useAppDispatch } from "@/redux/hooks";
 import { useEffect, useState } from "react";
 import Item from "./item";
 import { changeItemStatus } from "@/redux/slices/items/itemsSlice";
+import { fetchItems } from "@/redux/slices/items/itemsSlice";
 import { endSprint } from "@/redux/slices/sprints/sprintsSlice";
 import dayjs from "dayjs"; // Install dayjs for date handling
 
@@ -9,12 +10,17 @@ const Sprint = () => {
     const [selectedSprint, setSelectedSprint] = useState<string | null>(null);
     const items = useAppSelector((state) => state.itemsReducer.items);
     const sprints = useAppSelector((state) => state.sprintsReducer.sprints);
-    const ongoingSprints = sprints.filter((sprint) => !sprint.endedOn);
+    const ongoingSprints = sprints.filter((sprint) => (!sprint.endedOn && sprint.startedOn));
     const finishedSprints = sprints.filter((sprint) => sprint.endedOn);
     const draggableitemId = useAppSelector((state) => state.draggableItemReducer.dreggedItemId);
     const loggedInUser = useAppSelector((state) => state.userReducer.user);
+    const currentProjectId = useAppSelector((state) => state.currentProjectIdReducer.currentProjectId);
 
     const dispatch = useAppDispatch();
+
+    useEffect(() => {
+        dispatch(fetchItems({ projectId: currentProjectId, sprintId: selectedSprint }));
+    }, [selectedSprint])
 
     // Set default sprint
     if (!selectedSprint && ongoingSprints.length > 0) {

@@ -212,7 +212,7 @@ const ViewItemModal = () => {
                     {newComment !== "" && 
                     <button 
                         onClick={handleAddComment} 
-                        className="bg-blue-500 text-white px-4 py-2 rounded"
+                        className="bg-[#14b473] text-white px-4 py-2 rounded"
                     >
                     Post Comment
                     </button>
@@ -223,7 +223,7 @@ const ViewItemModal = () => {
                     <div className="flex justify-end gap-2">
                         <button 
                             onClick={handleUpdate} 
-                            className="bg-blue-500 text-white px-4 py-2 rounded"
+                            className="bg-[#14b473] text-white px-4 py-2 rounded"
                         >
                             Update
                         </button>

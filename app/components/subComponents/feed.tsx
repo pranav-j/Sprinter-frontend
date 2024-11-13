@@ -5,7 +5,7 @@ const Feed = () => {
         .filter((item) => item.activityLog && item.activityLog.length > 0);
 
     return (
-        <div className="bg-white p-4 rounded-lg flex flex-col h-full">
+        <div className="bg-white p-4 rounded-lg flex flex-col h-full overflow-y-auto">
             <h1 className="text-2xl font-bold mb-4">Feed</h1>
             {itemsWithActivityLog.map((item) => (
                 <div key={item._id}>

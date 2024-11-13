@@ -55,6 +55,7 @@ interface ItemsSlice {
     errorDeletingItem: string | null;
     errorCommenting: string | null;
     errorUpdatingItemStatus: string | null;
+    hasMore: boolean;
 };
 
 const initialState: ItemsSlice = {
@@ -70,12 +71,50 @@ const initialState: ItemsSlice = {
     errorDeletingItem: null,
     errorCommenting: null,
     errorUpdatingItemStatus: null,
+    hasMore: true,
 };
 
-export const fetchItems = createAsyncThunk<Itemm[], string>('items/fetchItems', async(currentProjectId: string) => {
-    const response =  await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/items?projectId=${currentProjectId}`, { withCredentials: true });
-    return response.data.items;
-});
+// export const fetchItems = createAsyncThunk<Itemm[], string>('items/fetchItems', async(currentProjectId: string) => {
+//     const response =  await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/items?projectId=${currentProjectId}`, { withCredentials: true });
+//     return response.data.items;
+// });
+
+// ---------------------------------
+
+// export const fetchItems = createAsyncThunk<
+//     { items: Itemm[]; hasMore: boolean }, // Return type
+//     { projectId: string; offset: number } // Arguments type
+// >(
+//     'items/fetchItems',
+//     async ({ projectId, offset }) => {
+//         const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/items`, {
+//             params: { projectId, offset },
+//             withCredentials: true,
+//         });
+//         console.log("response from fetchItems......", response);
+        
+//         return response.data; // Assuming API returns { items: Itemm[], hasMore: boolean }
+//     }
+// );
+
+export const fetchItems = createAsyncThunk<
+    { items: Itemm[] }, // Return type
+    { projectId: string; offset?: number; sprintId?: string | null } // Arguments type
+>(
+    'items/fetchItems',
+    async ({ projectId, offset, sprintId }) => {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/items`, {
+            params: { projectId, offset, sprintId },
+            withCredentials: true,
+        });
+        console.log("response from fetchItems......", response);
+        
+        return response.data; // Assuming API returns { items: Itemm[] }
+    }
+);
+
+
+
 
 export const createItem = createAsyncThunk<Itemm, FormData>(
     'items/createItem',
@@ -177,10 +216,44 @@ const itemsSlice = createSlice({
             .addCase(fetchItems.pending, (state) => {
                 state.fetchStatus = 'pending';
             })
-            .addCase(fetchItems.fulfilled, (state, action: PayloadAction<Itemm[]>) => {
-                state.fetchStatus = 'fulfilled';
-                state.items = action.payload;
-            })
+            // .addCase(fetchItems.fulfilled, (state, action: PayloadAction<Itemm[]>) => {
+            //     state.fetchStatus = 'fulfilled';
+            //     state.items = [...state.items, ...action.payload.items];
+            //     state.hasMore = action.payload.hasMore;
+            // })
+            // .addCase(
+            //     fetchItems.fulfilled,
+            //     (state, action: PayloadAction<{ items: Itemm[]; hasMore: boolean }>) => {
+            //         state.fetchStatus = 'fulfilled';
+            //         state.items = [...state.items, ...action.payload.items];
+            //         state.hasMore = action.payload.hasMore; // Updated to correct the typo
+            //     }
+            // )
+            // .addCase(
+            //     fetchItems.fulfilled,
+            //     (state, action: PayloadAction<{ items: Itemm[] }>) => {
+            //         const items = action.payload as { items: Itemm[] };
+            //         state.fetchStatus = 'fulfilled';
+            //         state.items = [...state.items, ...action.payload.items];
+            //     }
+            // )   
+            .addCase(
+                fetchItems.fulfilled,
+                (state, action) => {
+                    const newItems = action.payload.items;
+            
+                    // Filter out items that are already in the state
+                    const filteredItems = newItems.filter(
+                        (newItem) => !state.items.some((existingItem) => existingItem._id === newItem._id)
+                    );
+            
+                    state.fetchStatus = 'fulfilled';
+            
+                    // Only add the filtered items (unique ones) to the state
+                    state.items = [...state.items, ...filteredItems];
+                }
+            )
+                     
             .addCase(fetchItems.rejected, (state, action) => {
                 state.fetchStatus = 'rejected';
                 state.errorFetchingItems = action.error.message || 'Failed to fetch items';

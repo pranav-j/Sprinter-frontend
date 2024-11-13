@@ -1,5 +1,9 @@
+"use client"
+
 import { Sprint, startSprint } from "@/redux/slices/sprints/sprintsSlice";
 import { useAppSelector, useAppDispatch } from "@/redux/hooks";
+import { useEffect } from "react";
+import { fetchItems } from "@/redux/slices/items/itemsSlice";
 import Item from "./item";
 import DropArea from "./dropArea";
 import axios from "axios";
@@ -12,10 +16,15 @@ const SprintCard = ({sprint}: SprintProp) => {
 
     const items = useAppSelector((state) => state.itemsReducer.items);
     const loggedInUser = useAppSelector((state) => state.userReducer.user);
+    const currentProjectId = useAppSelector((state) => state.currentProjectIdReducer.currentProjectId);
     const sprintItems = items.filter(item => item.sprintId === sprint._id);
     sprintItems.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
 
     const dispatch = useAppDispatch();
+
+    useEffect(() => {
+        dispatch(fetchItems({ projectId: currentProjectId, sprintId: sprint._id }));
+    }, [])
 
     console.log("sprintItems...........", sprintItems);
     
