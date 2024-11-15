@@ -1,13 +1,45 @@
 import { useAppSelector } from '@/redux/hooks';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
+
+type ReportStat = {
+  _id: string;          // The ID of the sprint
+  totalItems: number;
+  todoCount: number;
+  onGoingCount: number;
+  doneCount: number;
+};
+
 
 const Reports = () => {
     let sprints = useAppSelector((state) => state.sprintsReducer.sprints);
     sprints = sprints.filter((sprint) => sprint.startedOn);
-    const items = useAppSelector((state) => state.itemsReducer.items);
+    // const items = useAppSelector((state) => state.itemsReducer.items);
+    const currentProjectId = useAppSelector((state) => state.currentProjectIdReducer.currentProjectId);
 
     const COLORS = ['#FFBB28', '#00C49F', '#FF8042'];
     const STATUS_LABELS = ['To Do', 'Ongoing', 'Done'];
+
+    const [reportStats, setReportStats] = useState<ReportStat[]>([]);
+
+    useEffect(() => {
+      const fetchReportStats = async() => {
+        try {
+          const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/getReportStats`,
+            {
+              params: { projectId : currentProjectId},
+              withCredentials: true
+            }
+          );
+          setReportStats(response.data);
+        } catch (error) {
+          console.log("Error fetching reportStats......", error);
+          
+        }
+      }
+      fetchReportStats();
+    }, []);
 
     return (
         <div className="flex flex-col p-3 w-full h-full bg-[#d9d5d5] overflow-y-auto">
@@ -28,16 +60,37 @@ const Reports = () => {
     
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {sprints.map((sprint) => {
-              const sprintItems = items.filter((item) => item.sprintId === sprint._id);
-              const todo = sprintItems.filter((item) => item.status === 'todo').length;
-              const onGoing = sprintItems.filter((item) => item.status === 'onGoing').length;
-              const done = sprintItems.filter((item) => item.status === 'done').length;
-    
-              const data = [
-                { name: 'To Do', value: todo },
-                { name: 'Ongoing', value: onGoing },
-                { name: 'Done', value: done },
-              ];
+
+              let todo = 0;
+              let onGoing = 0;
+              let done = 0;
+
+              let data = [
+                    { name: 'To Do', value: todo },
+                    { name: 'Ongoing', value: todo },
+                    { name: 'Done', value: todo },
+                  ];
+
+              // Check if reportStats has data and if a matching report is found for the sprint
+              if (reportStats) {
+                const thisSprintReportStats = reportStats.filter((report) => report._id === sprint._id);
+              
+                // Ensure that thisSprintReportStats[0] exists
+                if (thisSprintReportStats.length > 0) {
+
+                  todo = thisSprintReportStats[0].todoCount;
+                  onGoing = thisSprintReportStats[0].onGoingCount;
+                  done = thisSprintReportStats[0].doneCount;
+
+                  data = [
+                    { name: 'To Do', value: todo },
+                    { name: 'Ongoing', value: onGoing },
+                    { name: 'Done', value: done },
+                  ];
+                }
+              }
+              
+              
     
               return (
                 <div key={sprint._id} className="min-w-[250px] bg-white rounded-lg shadow-md p-4">

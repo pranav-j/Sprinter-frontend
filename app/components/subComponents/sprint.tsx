@@ -95,23 +95,6 @@ const Sprint = () => {
                 </div>
 
                 {/* Progress Bar */}
-                {/* {selectedSprintDetails && (
-                    <div className="mt-4">
-                        <div className="w-full bg-gray-200 h-1 rounded">
-                            <div
-                                className={`h-1 rounded ${sprintProgress.missedBy === 0 ? "bg-blue-500" : "bg-red-600"} `}
-                                style={{ width: `${sprintProgress.progressPercentage}%` }}
-                            />
-                        </div>
-                        <div className="flex justify-between text-sm mt-1">
-                            <span className="text-xs">{sprintProgress.daysPassed} days passed</span>
-                            {
-                                sprintProgress.missedBy !== 0 && <span className="text-xs text-red-600">Missed by {sprintProgress.missedBy} days </span>
-                            }
-                            <span className="text-xs">{sprintProgress.remainingDays} days remaining</span>
-                        </div>
-                    </div>
-                )} */}
                 {selectedSprintDetails && (
                     <div className="mt-4">
                         {finishedSprintIds.includes(selectedSprint) ? 
