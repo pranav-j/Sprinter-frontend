@@ -7,11 +7,12 @@ import { endSprint } from "@/redux/slices/sprints/sprintsSlice";
 import dayjs from "dayjs"; // Install dayjs for date handling
 
 const Sprint = () => {
-    const [selectedSprint, setSelectedSprint] = useState<string | null>(null);
+    const [selectedSprint, setSelectedSprint] = useState<string>("");
     const items = useAppSelector((state) => state.itemsReducer.items);
     const sprints = useAppSelector((state) => state.sprintsReducer.sprints);
     const ongoingSprints = sprints.filter((sprint) => (!sprint.endedOn && sprint.startedOn));
     const finishedSprints = sprints.filter((sprint) => sprint.endedOn);
+    const finishedSprintIds = finishedSprints.map((sprint) => sprint._id);
     const draggableitemId = useAppSelector((state) => state.draggableItemReducer.dreggedItemId);
     const loggedInUser = useAppSelector((state) => state.userReducer.user);
     const currentProjectId = useAppSelector((state) => state.currentProjectIdReducer.currentProjectId);
@@ -49,7 +50,6 @@ const Sprint = () => {
         }
     };
 
-    // Calculate sprint progress
     const sprintProgress = selectedSprintDetails ? (() => {
         const startedOn = dayjs(selectedSprintDetails.startedOn);
         const today = dayjs();
@@ -95,7 +95,7 @@ const Sprint = () => {
                 </div>
 
                 {/* Progress Bar */}
-                {selectedSprintDetails && (
+                {/* {selectedSprintDetails && (
                     <div className="mt-4">
                         <div className="w-full bg-gray-200 h-1 rounded">
                             <div
@@ -110,6 +110,40 @@ const Sprint = () => {
                             }
                             <span className="text-xs">{sprintProgress.remainingDays} days remaining</span>
                         </div>
+                    </div>
+                )} */}
+                {selectedSprintDetails && (
+                    <div className="mt-4">
+                        {finishedSprintIds.includes(selectedSprint) ? 
+                            <>
+                            <div className="w-full bg-gray-200 h-1 rounded">
+                                <div
+                                    className="h-1 rounded bg-green-500 w-full"
+                                />
+                            </div>
+                            <div className="flex justify-center text-sm mt-1">
+                                <span className="text-xs text-green-600">Finiseed {sprintProgress.missedBy} days ago</span>
+                            </div>
+                            </>
+                            :
+                            <>
+                            <div className="w-full bg-gray-200 h-1 rounded">
+                                <div
+                                    className={`h-1 rounded ${sprintProgress.missedBy === 0 ? "bg-blue-500" : "bg-red-600"} `}
+                                    style={{ width: `${sprintProgress.progressPercentage}%` }}
+                                />
+                            </div>
+                            <div className="flex justify-between text-sm mt-1">
+                                <span className="text-xs">{sprintProgress.daysPassed} days passed</span>
+                                {
+                                    sprintProgress.missedBy !== 0 && <span className="text-xs text-red-600">Missed by {sprintProgress.missedBy} days </span>
+                                }
+                                <span className="text-xs">{sprintProgress.remainingDays} days remaining</span>
+                            </div>
+                            </>
+                        }
+
+
                     </div>
                 )}
             </div>
