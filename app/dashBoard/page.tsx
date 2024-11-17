@@ -11,10 +11,11 @@ import ViewItemModal from "../components/subComponents/viewItem";
 import DeleteItemModal from "../components/subComponents/deleteItem";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { fetchMembers } from "@/redux/slices/membersSlice";
-
+import withAuth from "../components/HOC/protectedRoute";
 import { resetCurrentItemId } from "@/redux/slices/items/viewItemModal";
 
-export default function Dashboard() {
+
+function Dashboard() {
     const isNewProjectModalOpen = useAppSelector((state) => state.newProjectModelOpenReducer.isNewProjectModalOpen);
     const isTaskModalOpen = useAppSelector((state) => state.newTaskModelOpenReducer.isNewTaskModalOpen);
     const isNewSprintModalOpen = useAppSelector((state) => state.newSprintModalOpenReducer.isNewSprintModalOpen);
@@ -94,3 +95,5 @@ export default function Dashboard() {
         </div>
     )
 };
+
+export default withAuth(Dashboard);
