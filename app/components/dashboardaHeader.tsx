@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { resetDeleteItemStatus, resetUpdateItemStatus } from "@/redux/slices/items/itemsSlice";
 import { toggleSidebar } from "../../redux/slices/sidebarSlice";
 import { setTab } from "../../redux/slices/tabSlice";
 import { useRouter } from 'next/navigation';
@@ -22,6 +23,8 @@ const DashboardHeader = () => {
     const currentItemId = useAppSelector((state) => state.ViewItemReducer.currentItemId);
     const currentProjectId = useAppSelector((state) => state.currentProjectIdReducer.currentProjectId);
     const currentProject = useAppSelector((state) => state.projectsReducer.projects).find((project) => project._id === currentProjectId);
+    const deleteItemStatus = useAppSelector((state) => state.itemsReducer.deleteItemStatus);
+    const updateItemStatus = useAppSelector((state) => state.itemsReducer.updateItemStatus);
     const router = useRouter();
 
     useEffect(() => {
@@ -30,7 +33,34 @@ const DashboardHeader = () => {
         console.log("loggedInUser........", loggedInUser);
         console.log("currentItemId........", currentItemId);
         
-    }, [isCollapsed, selectedTab, currentItemId, loggedInUser])
+    }, [isCollapsed, selectedTab, currentItemId, loggedInUser]);
+
+    useEffect(() => {
+        console.log("deleteItemStatus.........", deleteItemStatus);
+        
+    }, [deleteItemStatus]);
+
+    useEffect(() => {
+        if(deleteItemStatus === 'Item deleted successfully' || deleteItemStatus === 'Failed to delete item') {
+            const deleteStatusTimeout = setTimeout(() => {
+                dispatch(resetDeleteItemStatus())
+                console.log("deleteStatusTimeout.........");
+            }, 1000);
+
+            return () => clearTimeout(deleteStatusTimeout);
+        }
+    }, [deleteItemStatus, dispatch]);
+
+    useEffect(() => {
+        if(updateItemStatus === 'Item edited successfully' || updateItemStatus === 'Failed to edit item') {
+            const deleteStatusTimeout = setTimeout(() => {
+                dispatch(resetUpdateItemStatus())
+                console.log("resetUpdateItemStatus.........");
+            }, 1000);
+
+            return () => clearTimeout(deleteStatusTimeout);
+        }
+    }, [updateItemStatus, dispatch]);
 
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
@@ -159,6 +189,14 @@ const DashboardHeader = () => {
                 </div>
             </div>
 
+            {deleteItemStatus !== 'idle' && 
+                <span className="px-3 py-1 border border-dashed border-[#14b473] rounded-2xl">{deleteItemStatus}</span>
+            }
+
+            
+            {updateItemStatus !== 'idle' && 
+                <span className="px-3 py-1 border border-dashed border-[#14b473] rounded-2xl">{updateItemStatus}</span>
+            }
 
             {loggedInUser && !loggedInUser.subscribed && (() => {
 

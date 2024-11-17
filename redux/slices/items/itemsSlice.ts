@@ -44,8 +44,8 @@ export interface Itemm {
 
 interface ItemsSlice {
     fetchStatus: 'idle' | 'pending' | 'fulfilled' | 'rejected';
-    updateItemStatus: 'idle' | 'pending' | 'fulfilled' | 'rejected';
-    deleteItemStatus: 'idle' | 'pending' | 'fulfilled' | 'rejected';
+    updateItemStatus: 'idle' | 'Editing.....' | 'Item edited successfully' | 'Failed to edit item';
+    deleteItemStatus: 'idle' | 'Deleting.....' | 'Item deleted successfully' | 'Failed to delete item';
     moveItemStatus: 'idle' | 'pending' | 'fulfilled' | 'rejected';
     changeItemStatusStatus : 'idle' | 'pending' | 'fulfilled' | 'rejected';
     items: Itemm[];
@@ -209,6 +209,9 @@ const itemsSlice = createSlice({
     reducers: {
         resetUpdateItemStatus: (state) => {
             state.updateItemStatus = 'idle';
+        },
+        resetDeleteItemStatus: (state) => {
+            state.deleteItemStatus = 'idle';
         }
     },
     extraReducers: (builder) => {
@@ -265,18 +268,18 @@ const itemsSlice = createSlice({
                 state.errorCreatingItem = action.error.message || 'Failed to create item';
             })
             .addCase(updateItem.pending, (state) => {
-                state.updateItemStatus = 'pending';
+                state.updateItemStatus = 'Editing.....';
             })
             .addCase(updateItem.fulfilled, (state, action) => {
                 const index = state.items.findIndex((item) => item._id === action.payload._id);
                 if (index !== -1) {
                     state.items[index] = action.payload;
                 }
-                state.updateItemStatus = 'fulfilled';
+                state.updateItemStatus = 'Item edited successfully';
             })
             .addCase(updateItem.rejected, (state, action) => {
                 state.errorUpdatingItem = action.error.message || 'Failed to updating item';
-                state.updateItemStatus = 'rejected';
+                state.updateItemStatus = 'Failed to edit item';
             })
             .addCase(addComment.fulfilled, (state, action) => {
                 const index = state.items.findIndex((item) => item._id === action.payload._id);
@@ -285,14 +288,14 @@ const itemsSlice = createSlice({
                 }
             })
             .addCase((deleteItem.pending), (state) => {
-                state.deleteItemStatus = 'pending';
+                state.deleteItemStatus = 'Deleting.....';
             })
             .addCase(deleteItem.fulfilled, (state, action) => {
                 state.items = state.items.filter(item => item._id !== action.payload);
-                state.deleteItemStatus = 'fulfilled';
+                state.deleteItemStatus = 'Item deleted successfully';
             })
             .addCase(deleteItem.rejected, (state, action) => {
-                state.deleteItemStatus = 'rejected';
+                state.deleteItemStatus = 'Failed to delete item';
                 state.errorDeletingItem = action.error.message || 'Failed to delete item';
             })
             .addCase(moveItem.pending, (state) => {
@@ -336,4 +339,4 @@ const itemsSlice = createSlice({
 });
 
 export default itemsSlice.reducer;
-export const { resetUpdateItemStatus } = itemsSlice.actions;
+export const { resetUpdateItemStatus, resetDeleteItemStatus } = itemsSlice.actions;
