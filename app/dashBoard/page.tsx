@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import DashboardHeader from "../components/dashboardaHeader";
 import TabDetails from "../components/tabDetails";
 import Sidebar from "../components/sidebar";
@@ -13,6 +13,8 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { fetchMembers } from "@/redux/slices/membersSlice";
 import withAuth from "../components/HOC/protectedRoute";
 import { resetCurrentItemId } from "@/redux/slices/items/viewItemModal";
+import { setIsNewProjectModalOpen } from "@/redux/slices/projects/newProjectModalSlice";
+import { resetLoginStatus } from "@/redux/slices/userSlice";
 
 
 function Dashboard() {
@@ -31,13 +33,8 @@ function Dashboard() {
     const dispatch = useAppDispatch();
 
     useEffect(() => {
-        console.log("moveItemStatus........", moveItemStatus);        
-    }, [moveItemStatus]);
-
-    useEffect(() => {
-        dispatch(fetchMembers(currentProjectId));
-        console.log("members.......", members);
-    }, [currentProjectId]);
+        dispatch(resetLoginStatus());
+    }, []);
 
     return(
         <div className="h-screen ststic">

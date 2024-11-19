@@ -6,7 +6,6 @@ import Link from "next/link";
 
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { GoogleLogin } from '@react-oauth/google';
-import axios from 'axios';
 import Image from 'next/image';
 
 export default function Home() {
@@ -16,10 +15,10 @@ export default function Home() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [showAdminLogin, setShowAdminLogin] = useState<boolean>(false);
-  const [userExists, setUserExists] = useState<string>("");
-
   const [emailError, setEmailError] = useState<string>("");
   const [passwordError, setPasswordError] = useState<string>("");
+
+  const loginStatus = useAppSelector((state) => state.userReducer.status);
 
   const dispatch = useAppDispatch();
 
@@ -97,7 +96,7 @@ export default function Home() {
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-300">
-      <div className="sm:w-1/2 md:w-1/3 lg:w-1/4 bg-white shadow-lg rounded-xl p-8 pb-3 mt-8">
+      <div className="flex flex-col sm:w-1/2 md:w-1/3 lg:w-1/4 bg-white shadow-lg rounded-xl p-8 pb-3 mt-8">
         <h2 className="text-2xl font-bold text-center text-black">
           Welcome to <span className='text-green-500'>Sprinter</span>
         </h2>
@@ -120,6 +119,11 @@ export default function Home() {
           {loginError && <p className="text-red-500 text-xs">Email or password invalid.</p>}
           {userExistsError && <p className="text-red-500 text-xs">{userExistsError}</p>}
         </div>
+        {(loginStatus === 'pending' || loginStatus === 'fulfilled') && 
+          (<div className='flex items-center justify-center'>
+            <span className='text-[#22c55e]'>Logging you in.....</span>
+          </div>)
+        }
 
         <form onSubmit={handleSubmit}>
           <div className="mb-4">

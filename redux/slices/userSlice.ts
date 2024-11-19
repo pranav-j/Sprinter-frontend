@@ -52,12 +52,16 @@ export const OAuth = createAsyncThunk<User, any, { rejectValue: string }>(
         }
       }
     }
-);  
+);
 
 const userSlice = createSlice({
   name: 'user',
   initialState,
-  reducers: {},
+  reducers: {
+    resetLoginStatus: (state) => {
+      state.status = 'idle';
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(login.pending, (state) => {
@@ -91,6 +95,8 @@ const userSlice = createSlice({
         state.user = null;
       });
   }
-})
+});
+
+export const { resetLoginStatus } = userSlice.actions;
 
 export default userSlice.reducer;

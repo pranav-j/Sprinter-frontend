@@ -212,7 +212,7 @@ const TabDetails = () => {
                     withCredentials: true
                 })
                 setSearchResult(response.data);
-                console.log("SEARCH result.....", response.data, searchResult);
+                // console.log("SEARCH result.....", response.data, searchResult);
                 
             } catch (error) {
                 console.log("Error with search", error);
@@ -237,7 +237,7 @@ const TabDetails = () => {
     }else if(openSearch && !searchResult) {
         backlogItems = [];
     } else {
-        backlogItems = itemz.filter(item => !item.sprintId);
+        backlogItems = itemz.filter(item => !item.sprintId && item.projectId === currentProjectId);
     }
     // let backlogItems = itemz.filter(item => !item.sprintId);
 

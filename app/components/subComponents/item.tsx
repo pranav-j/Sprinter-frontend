@@ -70,7 +70,7 @@ const Item = ({item}: ItemProp) => {
                 <div className="flex justify-between">
                     <h1  onClick={() => dispatch(setCurrentItemId(item._id))}>{item._id}</h1>
                     <div className="flex gap-2">
-                        {loggedInUser?._id === item.createdBy &&
+                        {(loggedInUser?._id === item.createdBy || loggedInUser?.role === 'admin') &&
                             <button onClick={handleDelete} className="h-5 px-2 text-xs flex text-center text-white bg-red-500 rounded-full border">Delete</button>
                         }
                         
@@ -91,10 +91,14 @@ const Item = ({item}: ItemProp) => {
                                 </div>
                             )
                         ) : (
-                            <button onClick={takeUpItem} className="w-5 h-5 rounded-full border flex items-center"><PiHandGrabbingLight className="w-5 h-5" /></button>
+                            loggedInUser?.role === 'admin' ? (<span className="w-5 h-5"></ span>) :
+                            (
+                                <button onClick={takeUpItem} className="w-5 h-5 rounded-full border flex items-center">
+                                    <PiHandGrabbingLight className="w-5 h-5" />
+                                </button>
+                            )
                         )}
                     </div>
-
 
                 </div>
                 
